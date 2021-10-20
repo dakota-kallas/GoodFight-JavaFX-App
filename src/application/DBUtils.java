@@ -78,7 +78,7 @@ public class DBUtils {
 		ResultSet resultSet = null;
 
 		try {
-			connection = DriverManager.getConnection("jdbc:mysql://192.168.0.7:3306/npdb", "user", "admin");
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
 			psCheckUserExists = connection.prepareStatement("SELECT * FROM user WHERE email = ?");
 			psCheckUserExists.setString(1, email);
 			resultSet = psCheckUserExists.executeQuery();
@@ -153,7 +153,7 @@ public class DBUtils {
 		PreparedStatement psInsert = null;
 
 		try {
-			connection = DriverManager.getConnection("jdbc:mysql://192.168.0.7:3306/npdb", "user", "admin");
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
 
 			psInsert = connection.prepareStatement("INSERT INTO event (SpotsAvailable, DtStart, DtEnd, Name, Location) VALUES (?, ?, ?, ?, ?)");
 			psInsert.setString(1, spotsAvailable + "");
@@ -195,7 +195,7 @@ public class DBUtils {
 		ResultSet resultSet = null;
 
 		try {
-			connection = DriverManager.getConnection("jdbc:mysql://192.168.0.7:3306/npdb", "user", "admin");
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
 			psCheckUserRegistered = connection.prepareStatement("SELECT * FROM attended WHERE EventId = ? AND Email = ?");
 			psCheckUserRegistered.setInt(1, eventId);
 			psCheckUserRegistered.setString(2, email);
@@ -271,7 +271,7 @@ public class DBUtils {
 		ResultSet resultSet = null;
 
 		try {
-			connection = DriverManager.getConnection("jdbc:mysql://192.168.0.7:3306/npdb", "user", "admin");
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
 			preparedStatement = connection.prepareStatement("SELECT Password, Type, FirstName, LastName FROM user WHERE Email = ?");
 			preparedStatement.setString(1, email);
 			resultSet = preparedStatement.executeQuery();
