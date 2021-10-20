@@ -60,14 +60,14 @@
             </Button>
          </children>
       </HBox>
-      <Pane layoutX="131.0" layoutY="115.0" prefHeight="260.0" prefWidth="442.0" style="-fx-border-color: #bbbbbb; -fx-border-radius: 10; -fx-background-radius: 10;">
+      <Pane layoutX="133.0" layoutY="51.0" prefHeight="260.0" prefWidth="442.0" style="-fx-border-radius: 10; -fx-background-radius: 10;">
          <children>
-            <ListView fx:id="listview_events" layoutX="14.0" layoutY="42.0" prefHeight="176.0" prefWidth="411.0" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-color: #373737; -fx-border-radius: 10;">
+            <ListView fx:id="listview_events" layoutX="14.0" layoutY="42.0" prefHeight="176.0" prefWidth="411.0" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #373737;">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ListView>
-            <Button fx:id="button_register" layoutX="150.0" layoutY="227.0" mnemonicParsing="false" style="-fx-background-color: #ec1c2c;" text="Register for Selected" textFill="#373737">
+            <Button fx:id="button_register" layoutX="150.0" layoutY="227.0" mnemonicParsing="false" style="-fx-background-color: #ec1c2c;" text="Register for Selected" textFill="WHITE">
                <font>
                   <Font name="Arial Rounded MT Bold" size="12.0" />
                </font>

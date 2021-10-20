@@ -148,18 +148,19 @@ public class DBUtils {
 	 * @param firstName:   		The user's first name
 	 * @param accountType: 		The account type of the user
 	 */
-	public static void createEvent(ActionEvent event, String eventName, String date, int spotsAvailable, int startTime, int endTime, String email, String firstName, String lastName, String accountType) {
+	public static void createEvent(ActionEvent event, String eventName, String date, String location, int spotsAvailable, int startTime, int endTime, String email, String firstName, String lastName, String accountType) {
 		Connection connection = null;
 		PreparedStatement psInsert = null;
 
 		try {
 			connection = DriverManager.getConnection("jdbc:mysql://192.168.0.7:3306/npdb", "user", "admin");
 
-			psInsert = connection.prepareStatement("INSERT INTO event (SpotsAvailable, DtStart, DtEnd, Name) VALUES (?, ?, ?, ?)");
+			psInsert = connection.prepareStatement("INSERT INTO event (SpotsAvailable, DtStart, DtEnd, Name, Location) VALUES (?, ?, ?, ?, ?)");
 			psInsert.setString(1, spotsAvailable + "");
 			psInsert.setString(2, date + " " + startTime + ":00:00");
 			psInsert.setString(3, date + " " + endTime + ":00:00");
 			psInsert.setString(4, eventName);
+			psInsert.setString(5, location);
 			psInsert.executeUpdate();
 
 			changeScene(event, "AdminMainPage.fxml", "Home", email, firstName, lastName, accountType);

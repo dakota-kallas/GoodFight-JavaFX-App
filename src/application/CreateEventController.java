@@ -20,6 +20,7 @@ public class CreateEventController implements Initializable{
 	@FXML private Label label_account_type;
 
 	@FXML private TextField tf_event_name;
+	@FXML private TextField tf_location;
 
 	@FXML private DatePicker dp_select_date;
 
@@ -78,7 +79,7 @@ public class CreateEventController implements Initializable{
 
 				String eventName = tf_event_name.getText();
 
-				if (dp_select_date.getValue() == null || eventName.trim().equals("")) {
+				if (dp_select_date.getValue() == null || eventName.trim().equals("") || tf_location.getText().trim().isEmpty()) {
 					System.out.println("Please fill in all information.");
 					Alert alert = new Alert(Alert.AlertType.ERROR);
 					alert.setContentText("Please fill in all information fields.");
@@ -86,8 +87,9 @@ public class CreateEventController implements Initializable{
 					return;
 				}
 				String date = dp_select_date.getValue().toString();
+				String location = tf_location.getText();
 
-				DBUtils.createEvent(event, eventName, date, (int) spinner_spots.getValue(), (int) spinner_start_time.getValue(), (int) spinner_end_time.getValue(), email, firstName, lastName, accountType);
+				DBUtils.createEvent(event, eventName, date, location, (int) spinner_spots.getValue(), (int) spinner_start_time.getValue(), (int) spinner_end_time.getValue(), email, firstName, lastName, accountType);
 				System.out.println("You've created an event! :)");
 			}
 		});
