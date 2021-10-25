@@ -23,7 +23,7 @@ public class RegisterController implements Initializable {
     @FXML
     private TextField tf_email;
     @FXML
-    private TextField tf_password;
+    private PasswordField pf_password;
 
     @FXML
     private RadioButton rb_volunteer;
@@ -45,8 +45,8 @@ public class RegisterController implements Initializable {
             public void handle(ActionEvent event) {
                 String toggleType = ((RadioButton) accountToggle.getSelectedToggle()).getText();
 
-                if (!tf_email.getText().trim().isEmpty() && !tf_password.getText().trim().isEmpty() && !tf_firstname.getText().trim().isEmpty()) {
-                    DBUtils.signUpUser(event, tf_email.getText(), tf_password.getText(), tf_firstname.getText(), tf_lastname.getText(), toggleType);
+                if (!tf_email.getText().trim().isEmpty() && !pf_password.getText().trim().isEmpty() && !tf_firstname.getText().trim().isEmpty()) {
+                    DBUtils.signUpUser(event, tf_email.getText(), pf_password.getText(), tf_firstname.getText(), tf_lastname.getText(), toggleType);
                 } else {
                     System.out.println("Please fill in all information");
                     Alert alert = new Alert(Alert.AlertType.ERROR);

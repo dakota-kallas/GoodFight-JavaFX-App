@@ -42,6 +42,9 @@ public class DBUtils {
 				} else if (fxmlFile.equals("ViewEvents.fxml")) {
 					ViewEventsController viewEventsController = loader.getController();
 					viewEventsController.setUserInformation(firstName, lastName, email, accountType);
+				} else if (fxmlFile.equals("ViewProfile.fxml")) {
+					ViewProfileController viewProfileController = loader.getController();
+					viewProfileController.setUserInformation(firstName, lastName, email, accountType);
 				} else {
 					System.out.println("Uh oh...");
 				}
@@ -58,7 +61,7 @@ public class DBUtils {
 
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.setTitle(title);
-		stage.setScene(new Scene(root, 600, 400));
+		stage.setScene(new Scene(root, 800, 600));
 		stage.show();
 	}
 
@@ -258,6 +261,51 @@ public class DBUtils {
 		}
 	}
 
+	public static void cancelRegistration(ActionEvent event, int eventId, String date, String email, String firstName, String lastName, String accountType) {
+		Connection connection = null;
+		PreparedStatement psCancelRegistration = null;
+
+		try {
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
+			psCancelRegistration = connection.prepareStatement("DELETE FROM attended WHERE Email = ? AND EventId = ?");
+			psCancelRegistration.setString(1, email);
+			psCancelRegistration.setInt(2, eventId);
+			psCancelRegistration.executeUpdate();
+
+			// Refresh the main page
+			if(accountType.equals("Volunteer")) {
+				changeScene(event, "VolunteerMainPage.fxml", "Home", email, firstName, lastName, accountType);
+			} else if (accountType.equals("Admin")){
+				changeScene(event, "AdminMainPage.fxml", "Home", email, firstName, lastName, accountType);
+			} else if (accountType.equals("Donor")) {
+				changeScene(event, "VolunteerMainPage.fxml", "Home", email, firstName, lastName, accountType);
+			}
+			// Confirm to the user that they have cancelled their registration
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+			alert.setContentText("Event registration cancelled.");
+			alert.show();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (psCancelRegistration != null) {
+				try {
+					psCancelRegistration.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+
+				}
+			}
+		}
+	}
+
 	/**
 	 * Method used to log in a user.
 	 *
@@ -317,6 +365,48 @@ public class DBUtils {
 			if (preparedStatement != null) {
 				try {
 					preparedStatement.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+
+				}
+			}
+		}
+	}
+
+	public static void updateUser(ActionEvent event, String email, String firstName, String lastName, String accountType) {
+		Connection connection = null;
+		PreparedStatement psUpdate = null;
+
+		try {
+			// Update the user information in the database
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
+			psUpdate = connection.prepareStatement("UPDATE user SET FirstName = ?, LastName = ? WHERE Email = ?");
+			psUpdate.setString(1, firstName);
+			psUpdate.setString(2, lastName);
+			psUpdate.setString(3, email);
+			psUpdate.executeUpdate();
+
+			// Refresh the profile page
+			changeScene(event, "ViewProfile.fxml", "My Profile", email, firstName, lastName, accountType);
+
+			// Confirm to the user that they have cancelled their registration
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+			alert.setContentText("User information updated.");
+			alert.show();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (psUpdate != null) {
+				try {
+					psUpdate.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}

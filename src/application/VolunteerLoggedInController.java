@@ -12,17 +12,13 @@ import java.util.ResourceBundle;
 
 public class VolunteerLoggedInController implements Initializable{
 	
-	@FXML
-	private Button button_logout;
-	@FXML
-	private Button button_home;
-	@FXML
-	private Button button_view_events;
+	@FXML private Button button_logout;
+	@FXML private Button button_home;
+	@FXML private Button button_profile;
+	@FXML private Button button_view_events;
 	
-	@FXML
-	private Label label_name;
-	@FXML
-	private Label label_account_type;
+	@FXML private Label label_name;
+	@FXML private Label label_account_type;
 
 	private String firstName = "",lastName = "", email = "", accountType = "";
 	
@@ -34,6 +30,14 @@ public class VolunteerLoggedInController implements Initializable{
 			@Override
 			public void handle(ActionEvent event) {
 				DBUtils.changeScene(event, "LogIn.fxml", "Log in!", null, null,null, null);
+			}
+		});
+
+		// Assign the action to navigate the profile page once the "Profile" button is clicked.
+		button_profile.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				DBUtils.changeScene(event, "ViewProfile.fxml", "My Profile", email, firstName, lastName, accountType);
 			}
 		});
 

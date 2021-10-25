@@ -10,33 +10,32 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.VolunteerLoggedInController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.VolunteerLoggedInController">
    <children>
-      <Label fx:id="label_name" alignment="CENTER_RIGHT" layoutX="462.0" prefHeight="35.0" prefWidth="132.0" text="Full Name" textFill="#2f2f2f">
-         <font>
-            <Font name="Arial Rounded MT Bold" size="12.0" />
-         </font>
-      </Label>
-      <VBox layoutY="35.0" prefHeight="365.0" prefWidth="111.0" style="-fx-background-color: #373737;">
+      <HBox layoutX="620.0" prefHeight="35.0" prefWidth="180.0">
          <children>
-            <Button fx:id="button_home" mnemonicParsing="false" prefHeight="26.0" prefWidth="113.0" style="-fx-background-color: #ffffff;" text="Home                 ⮞" textFill="#373737">
+            <Label fx:id="label_name" alignment="CENTER_RIGHT" prefHeight="35.0" prefWidth="140.0" text="Full Name" textFill="#2f2f2f">
                <font>
                   <Font name="Arial Rounded MT Bold" size="12.0" />
                </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-            <Button fx:id="button_view_events" mnemonicParsing="false" prefHeight="26.0" prefWidth="113.0" style="-fx-background-color: transparent;" text="View Events    ⮞" textFill="WHITE">
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="12.0" />
-               </font>
+            </Label>
+            <Button fx:id="button_profile" mnemonicParsing="false" prefHeight="35.0" prefWidth="45.0" style="-fx-background-color: transparent;">
+               <graphic>
+                  <ImageView fitHeight="35.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@profileicon.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </graphic>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
          </children>
-      </VBox>
+      </HBox>
       <HBox prefHeight="35.0" prefWidth="111.0" style="-fx-background-color: #373737;">
          <children>
             <Label fx:id="label_account_type" alignment="CENTER" prefHeight="35.0" prefWidth="80.0" text="Volunteer" textFill="WHITE">
@@ -58,5 +57,34 @@
             </Button>
          </children>
       </HBox>
+      <VBox fx:id="nav_volunteer" layoutY="35.0" prefHeight="450.0" prefWidth="111.0" style="-fx-background-color: #373737;">
+         <children>
+            <Button fx:id="button_home" mnemonicParsing="false" prefHeight="26.0" prefWidth="113.0" style="-fx-background-color: #ffffff;" text="Home                 ⮞" textFill="#373737">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="button_view_events" mnemonicParsing="false" prefHeight="26.0" prefWidth="113.0" style="-fx-background-color: transparent;" text="View Events    ⮞" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+      </VBox>
+      <VBox layoutY="485.0" prefHeight="115.0" prefWidth="111.0" style="-fx-background-color: #373737;">
+         <children>
+            <ImageView fitHeight="100.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@goodfightlogo.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>
