@@ -23,6 +23,8 @@ public class ViewEventsController implements Initializable{
 	@FXML private Button button_home_a;
 	@FXML private Button button_view_events;
 	@FXML private Button button_view_events_a;
+	@FXML private Button button_donate_a;
+	@FXML private Button button_profile;
 	@FXML private Button button_create_event;
 
 	@FXML private Button button_register;
@@ -114,6 +116,7 @@ public class ViewEventsController implements Initializable{
 				}
 			}
 		}));
+
 		// Assigned the action that is caused by the "Home" button being clicked by an admin.
 		button_home_a.setOnAction((new EventHandler<ActionEvent>() {
 			@Override
@@ -121,6 +124,14 @@ public class ViewEventsController implements Initializable{
 				DBUtils.changeScene(event, "AdminMainPage.fxml", "Home", email, firstName, lastName, accountType);
 			}
 		}));
+
+		// Assign the action to navigate the profile page once the "Profile" button is clicked.
+		button_profile.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				DBUtils.changeScene(event, "ViewProfile.fxml", "My Profile", email, firstName, lastName, accountType);
+			}
+		});
 
 		// Assigned the action that is caused by the "Create Event" button being clicked.
 		button_create_event.setOnAction((new EventHandler<ActionEvent>() {
@@ -143,6 +154,14 @@ public class ViewEventsController implements Initializable{
 			@Override
 			public void handle(ActionEvent event) {
 				DBUtils.changeScene(event, "ViewEvents.fxml", "View Available Events", email, firstName, lastName, accountType);
+			}
+		}));
+
+		// Assigned the action that is caused by the "Donate" button being clicked by an admin.
+		button_donate_a.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				DBUtils.changeScene(event, "DonatePage.fxml", "Donate", email, firstName, lastName, accountType);
 			}
 		}));
 

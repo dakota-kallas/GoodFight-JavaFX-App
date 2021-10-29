@@ -23,6 +23,7 @@ public class ViewProfileController implements Initializable{
 	@FXML private Button button_view_events;
 	@FXML private Button button_view_events_a;
 	@FXML private Button button_profile;
+	@FXML private Button button_donate_a;
 
 	@FXML private Button button_save;
 
@@ -103,6 +104,14 @@ public class ViewProfileController implements Initializable{
 			@Override
 			public void handle(ActionEvent event) {
 				DBUtils.changeScene(event, "ViewEvents.fxml", "View Available Events", email, firstName, lastName, accountType);
+			}
+		}));
+
+		// Assigned the action that is caused by the "Donate" button being clicked by an admin.
+		button_donate_a.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				DBUtils.changeScene(event, "DonatePage.fxml", "Donate", email, firstName, lastName, accountType);
 			}
 		}));
 

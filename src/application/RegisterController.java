@@ -11,24 +11,17 @@ import java.util.ResourceBundle;
 
 public class RegisterController implements Initializable {
 
-    @FXML
-    private Button button_register;
-    @FXML
-    private Button button_log_in;
+    @FXML private Button button_register;
+    @FXML private Button button_log_in;
 
-    @FXML
-    private TextField tf_firstname;
-    @FXML
-    private TextField tf_lastname;
-    @FXML
-    private TextField tf_email;
-    @FXML
-    private PasswordField pf_password;
+    @FXML private TextField tf_firstname;
+    @FXML private TextField tf_lastname;
+    @FXML private TextField tf_email;
+    @FXML private PasswordField pf_password;
+    @FXML private PasswordField pf_confirm_password;
 
-    @FXML
-    private RadioButton rb_volunteer;
-    @FXML
-    private RadioButton rb_donor;
+    @FXML private RadioButton rb_volunteer;
+    @FXML private RadioButton rb_donor;
 
 
     @Override
@@ -45,8 +38,15 @@ public class RegisterController implements Initializable {
             public void handle(ActionEvent event) {
                 String toggleType = ((RadioButton) accountToggle.getSelectedToggle()).getText();
 
-                if (!tf_email.getText().trim().isEmpty() && !pf_password.getText().trim().isEmpty() && !tf_firstname.getText().trim().isEmpty()) {
-                    DBUtils.signUpUser(event, tf_email.getText(), pf_password.getText(), tf_firstname.getText(), tf_lastname.getText(), toggleType);
+                if (!tf_email.getText().trim().isEmpty() && !pf_password.getText().trim().isEmpty() && !pf_confirm_password.getText().trim().isEmpty() && !tf_firstname.getText().trim().isEmpty()) {
+                    if(pf_confirm_password.getText().equals(pf_password.getText())) {
+                        DBUtils.signUpUser(event, tf_email.getText(), pf_password.getText(), tf_firstname.getText(), tf_lastname.getText(), toggleType);
+                    } else {
+                        System.out.println("Passwords do not match.");
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setContentText("Passwords do not match!");
+                        alert.show();
+                    }
                 } else {
                     System.out.println("Please fill in all information");
                     Alert alert = new Alert(Alert.AlertType.ERROR);

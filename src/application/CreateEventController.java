@@ -17,6 +17,8 @@ public class CreateEventController implements Initializable{
 	@FXML private Button button_home;
 	@FXML private Button button_create_event;
 	@FXML private Button button_view_events;
+	@FXML private Button button_donate;
+	@FXML private Button button_profile;
 	@FXML private Button button_submit_event;
 	
 	@FXML private Label label_name;
@@ -52,20 +54,17 @@ public class CreateEventController implements Initializable{
 		configureValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0,12,5);
 		this.spinner_end_time.setValueFactory(configureValues);
 
+		// Configure the lists used in the spinner selectors
 		ObservableList<String> end_ampm = FXCollections.observableArrayList("AM", "PM");
 		ObservableList<String> start_ampm = FXCollections.observableArrayList("AM", "PM");
-
 		SpinnerValueFactory<String> startValues = new SpinnerValueFactory.ListSpinnerValueFactory<String>(start_ampm);
 		this.spinner_start_time_ampm.setValueFactory(startValues);
 		startValues.setValue("AM");
 		spinner_start_time_ampm.setValueFactory(startValues);
-
 		SpinnerValueFactory<String> endValues = new SpinnerValueFactory.ListSpinnerValueFactory<String>(end_ampm);
 		this.spinner_end_time_ampm.setValueFactory(endValues);
 		endValues.setValue("PM");
 		spinner_end_time_ampm.setValueFactory(endValues);
-
-
 
 		// Assigned the action that is caused by the "Logout" button being clicked.
 		button_logout.setOnAction(new EventHandler<ActionEvent>() {
@@ -83,6 +82,14 @@ public class CreateEventController implements Initializable{
 			}
 		}));
 
+		// Assign the action to navigate the profile page once the "Profile" button is clicked.
+		button_profile.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				DBUtils.changeScene(event, "ViewProfile.fxml", "My Profile", email, firstName, lastName, accountType);
+			}
+		});
+
 		// Assigned the action that is caused by the "Create Event" button being clicked.
 		button_create_event.setOnAction((new EventHandler<ActionEvent>() {
 			@Override
@@ -96,6 +103,14 @@ public class CreateEventController implements Initializable{
 			@Override
 			public void handle(ActionEvent event) {
 				DBUtils.changeScene(event, "ViewEvents.fxml", "View Available Events", email, firstName, lastName, accountType);
+			}
+		}));
+
+		// Assigned the action that is caused by the "Donate" button being clicked.
+		button_donate.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				DBUtils.changeScene(event, "DonatePage.fxml", "Donate", email, firstName, lastName, accountType);
 			}
 		}));
 

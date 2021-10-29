@@ -19,6 +19,7 @@ public class AdminLoggedInController implements Initializable{
 	@FXML private Button button_create_event;
 	@FXML private Button button_view_events;
 	@FXML private Button button_profile;
+	@FXML private Button button_donate;
 
 	@FXML private ListView listview_my_events;
 	@FXML private Button button_cancel;
@@ -73,6 +74,14 @@ public class AdminLoggedInController implements Initializable{
 			@Override
 			public void handle(ActionEvent event) {
 				DBUtils.changeScene(event, "ViewEvents.fxml", "View Available Events", email, firstName, lastName, accountType);
+			}
+		}));
+
+		// Assigned the action that is caused by the "Donate" button being clicked.
+		button_donate.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				DBUtils.changeScene(event, "DonatePage.fxml", "Donate", email, firstName, lastName, accountType);
 			}
 		}));
 

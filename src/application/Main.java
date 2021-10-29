@@ -1,3 +1,13 @@
+/**
+ * Main.java
+ * 
+ * JavaFX Bookkeeping Software
+ * 
+ * This is the main class used to run the Bookkeeping software. A descriptions of this software
+ * can be found in the project description writeup.
+ * 
+ */
+
 package application;
 	
 import javafx.application.Application;
@@ -7,21 +17,15 @@ import javafx.scene.Parent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
 
-/**
- * https://thegoodfight.club/about-us/
- * Account types:
- * 				Volunteer: 3
- * 				Donor: 2
- * 				Admin: 1
- * --module-path "C:\Users\Dakota\Documents\CS341\openjfx-17.0.0.1_windows-x64_bin-sdk\javafx-sdk-17.0.0.1\lib" --add-modules javafx.controls,javafx.fxml
- */
 public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception{
+		// Load the Log in page to start the program and set the window size.
         Parent root = FXMLLoader.load(getClass().getResource("LogIn.fxml"));
         primaryStage.setTitle("Log in!");
         primaryStage.setScene(new Scene(root, 800, 600));
 		primaryStage.setResizable(false);
+		// Gather the icon resource for the page and load it onto the window
 		Image icon = new Image(getClass().getResourceAsStream("goodfightlogo.png"));
 		primaryStage.getIcons().add(icon);
         primaryStage.show();

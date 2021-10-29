@@ -62,7 +62,7 @@
       </HBox>
       <VBox fx:id="nav_admin" layoutY="35.0" prefHeight="450.0" prefWidth="111.0" style="-fx-background-color: #373737;">
          <children>
-            <Button fx:id="button_home_a" mnemonicParsing="false" prefHeight="26.0" prefWidth="113.0" style="-fx-background-color: #ffffff;" text="Home                 ⮞" textFill="#373737">
+            <Button fx:id="button_home_a" mnemonicParsing="false" prefHeight="26.0" prefWidth="113.0" style="-fx-background-color: transparent;" text="Home                 ⮞" textFill="WHITE">
                <font>
                   <Font name="Arial Rounded MT Bold" size="12.0" />
                </font>
@@ -86,7 +86,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="button_donate" layoutX="10.0" layoutY="88.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="111.0" style="-fx-background-color: transparent;" text="Donate              ⮞" textFill="WHITE">
+            <Button fx:id="button_donate_a" layoutX="10.0" layoutY="88.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="111.0" style="-fx-background-color: transparent;" text="Donate              ⮞" textFill="WHITE">
                <font>
                   <Font name="Arial Rounded MT Bold" size="12.0" />
                </font>
@@ -106,7 +106,7 @@
       </VBox>
       <VBox fx:id="nav_volunteer" layoutY="35.0" prefHeight="450.0" prefWidth="111.0" style="-fx-background-color: #373737;">
          <children>
-            <Button fx:id="button_home" mnemonicParsing="false" prefHeight="26.0" prefWidth="113.0" style="-fx-background-color: #ffffff;" text="Home                 ⮞" textFill="#373737">
+            <Button fx:id="button_home" mnemonicParsing="false" prefHeight="26.0" prefWidth="113.0" style="-fx-background-color: transparent;" text="Home                 ⮞" textFill="WHITE">
                <font>
                   <Font name="Arial Rounded MT Bold" size="12.0" />
                </font>
