@@ -2,6 +2,7 @@ package application;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.event.EventHandler;
@@ -29,6 +30,8 @@ public class VolunteerLoggedInController implements Initializable{
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		//Configure the style of the events list
+		listview_my_events.setStyle("-fx-font-family: \"Arial Rounded MT\"; -fx-font-size: 12px;");
 
 		// Assigned the action that is caused by the "Logout" button being clicked.
 		button_logout.setOnAction(new EventHandler<ActionEvent>() {
@@ -66,11 +69,20 @@ public class VolunteerLoggedInController implements Initializable{
 		button_cancel.setOnAction((new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				String selectedEvent = listview_my_events.getSelectionModel().getSelectedItem().toString();
-				int eventId = Integer.valueOf(selectedEvent.substring(1, 5));
-				String date = selectedEvent.substring(selectedEvent.length() - 10);
+				// Check if an event is selected
+				if (listview_my_events.getSelectionModel().isEmpty()) {
+					// If an event is not selected, show an error
+					System.out.println("No event selected.");
+					Alert alert = new Alert(Alert.AlertType.ERROR);
+					alert.setContentText("Please select an event.");
+					alert.show();
+				} else {
+					String selectedEvent = listview_my_events.getSelectionModel().getSelectedItem().toString();
+					int eventId = Integer.valueOf(selectedEvent.substring(1, 5));
+					String date = selectedEvent.substring(selectedEvent.length() - 10);
 
-				DBUtils.cancelRegistration(event, eventId, date, email, firstName, lastName, accountType);
+					DBUtils.cancelRegistration(event, eventId, date, email, firstName, lastName, accountType);
+				}
 			}
 		}));
 	}

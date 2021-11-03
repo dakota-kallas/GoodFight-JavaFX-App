@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 
 import java.net.URL;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class DonatePageController implements Initializable{
@@ -29,6 +30,7 @@ public class DonatePageController implements Initializable{
 	@FXML private RadioButton rd_other;
 	@FXML private TextField tf_other_amount;
 	@FXML private Button button_submit_donation;
+	@FXML private Label label_contribution;
 	
 	@FXML private Label label_name;
 	@FXML private Label label_account_type;
@@ -43,6 +45,7 @@ public class DonatePageController implements Initializable{
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+
 		//Configure the radio buttons
 		ToggleGroup donationTypeToggle = new ToggleGroup();
 		rd_restricted.setToggleGroup(donationTypeToggle);
@@ -104,6 +107,50 @@ public class DonatePageController implements Initializable{
 				DBUtils.changeScene(event, "DonatePage.fxml", "Donate", email, firstName, lastName, accountType);
 			}
 		}));
+
+		// Assigned the action that is caused by the "Submit Donation" button being clicked.
+		button_submit_donation.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				boolean valid = true;
+				String toggleType = ((RadioButton) donationTypeToggle.getSelectedToggle()).getText();
+				String donation = ((RadioButton) donationAmountToggle.getSelectedToggle()).getText();
+				int amount = 0;
+				// Check what donation amount was selected
+				if(donation.equals("other")) {
+					if(tf_other_amount.getText().trim().matches("[0-9]+")) {
+						amount = Integer.valueOf(tf_other_amount.getText().trim());
+					} else {
+						valid = false;
+						System.out.println("Invalid donation amount.");
+						Alert alert = new Alert(Alert.AlertType.ERROR);
+						alert.setContentText("Please enter a valid donation amount.");
+						alert.show();
+					}
+				} else {
+					amount = Integer.valueOf(donation);
+				}
+				// Process the donation depending on donation type
+				if (toggleType.equals("General (Unrestricted)") && valid) {
+					DBUtils.processUnrestrictedDonation(event, amount, email, firstName, lastName, accountType);
+				} else {
+					// Check if an event is selected
+					if (listview_events.getSelectionModel().isEmpty()) {
+						// If an event is not selected, show an error
+						System.out.println("No event selected.");
+						Alert alert = new Alert(Alert.AlertType.ERROR);
+						alert.setContentText("Please select an event.");
+						alert.show();
+					} else {
+						// If an event is selected, donate to said event
+						String selectedEvent = listview_events.getSelectionModel().getSelectedItem().toString();
+						int eventId = Integer.valueOf(selectedEvent.substring(1, 5));
+
+						DBUtils.processRestrictedDonation(event, eventId, amount, email, firstName, lastName, accountType);
+					}
+				}
+			}
+		}));
 	}
 	
 	public void setUserInformation(String firstName, String lastName, String email, String accountType) {
@@ -118,13 +165,18 @@ public class DonatePageController implements Initializable{
 		// Configure the ListView to display all the events
 		Connection connection = null;
 		PreparedStatement psGetEvents = null;
+		PreparedStatement psGetDonations = null;
 		ResultSet resultSet = null;
 
 		try {
+			// Query the database to get all events on or after today's date
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
-			psGetEvents = connection.prepareStatement("SELECT Name, Location, DtStart, DtEnd, EventId, SpotsAvailable FROM event");
+			psGetEvents = connection.prepareStatement("SELECT * FROM event WHERE DtStart >= ?");
+			psGetEvents.setString(1, LocalDate.now().toString());
 			resultSet = psGetEvents.executeQuery();
+			listview_events.setStyle("-fx-font-family: \"Arial Rounded MT\"; -fx-font-size: 12px;");
 
+			// While there are still events in the result set, add them to the displayed list
 			while(resultSet.next()) {
 				String eventName = resultSet.getString("Name");
 				String eventLocation = resultSet.getString("Location");
@@ -132,11 +184,20 @@ public class DonatePageController implements Initializable{
 				String eventEdTime = resultSet.getTime("DtEnd").toString();
 				int eventID = resultSet.getInt("EventId");
 				int spotsAvailable = resultSet.getInt("SpotsAvailable");
-				String Date = resultSet.getDate("DtStart").toString();
-				String event = "[" + eventID + "] " + eventName + "  Spots: " + spotsAvailable  + "  Location: " + eventLocation  + "  Date: " + Date;
+				String dbDate = resultSet.getDate("DtStart").toString();
+				String event = "[" + eventID + "] " + eventName + "  Spots: " + spotsAvailable  + "  Location: " + eventLocation  + "  Date: " + dbDate;
 
 				listview_events.getItems().add(event);
 			}
+
+			psGetDonations = connection.prepareStatement("SELECT sum(Amount) AS total_amount FROM donation NATURAL JOIN donated_by WHERE Email = ?");
+			psGetDonations.setString(1, email);
+			resultSet = psGetDonations.executeQuery();
+			if(resultSet.isBeforeFirst()) {
+				resultSet.next();
+				label_contribution.setText("$" + resultSet.getInt("total_amount"));
+			}
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -150,6 +211,13 @@ public class DonatePageController implements Initializable{
 			if (psGetEvents != null) {
 				try {
 					psGetEvents.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (psGetDonations != null) {
+				try {
+					psGetDonations.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}

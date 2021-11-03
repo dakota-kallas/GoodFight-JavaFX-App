@@ -78,7 +78,8 @@ public class DBUtils {
 
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.setTitle(title);
-		stage.setScene(new Scene(root, 800, 600));
+		Scene scene = new Scene(root, 800, 600);
+		stage.setScene(scene);
 		stage.show();
 	}
 
@@ -214,6 +215,172 @@ public class DBUtils {
 					connection.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public static void processRestrictedDonation(ActionEvent event, int eventId, int amount, String email, String firstName, String lastName, String accountType) {
+		// Set up variables to connect and query the database.
+		Connection connection = null;
+		PreparedStatement psInsert = null;
+		PreparedStatement getDonation = null;
+		ResultSet resultSet = null;
+
+		try {
+			// Connect to the database and create a new donation.
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
+			psInsert = connection.prepareStatement("INSERT INTO donation (Amount) VALUES (?)");
+			psInsert.setInt(1, amount);
+			psInsert.executeUpdate();
+
+			// Get the donation ID that was generated
+			getDonation = connection.prepareStatement("SELECT LAST_INSERT_ID() AS last_id FROM donation");
+			resultSet = getDonation.executeQuery();
+			resultSet.next();
+			int DonationId = resultSet.getInt("last_id");
+
+			// Insert the relationship between the donation and the user.
+			psInsert = connection.prepareStatement("INSERT INTO donated_by (DonationId, Email) VALUES (?, ?)");
+			psInsert.setInt(1, DonationId);
+			psInsert.setString(2, email);
+			psInsert.executeUpdate();
+
+			// Insert the relationship between the donation and the event.
+			psInsert = connection.prepareStatement("INSERT INTO donated_to (DonationId, EventId) VALUES (?, ?)");
+			psInsert.setInt(1, DonationId);
+			psInsert.setInt(2, eventId);
+			psInsert.executeUpdate();
+
+			// Once they have been registered, navigate back to their respective home page.
+			if(accountType.equals("Volunteer") || accountType.equals("Donor")) {
+				changeScene(event, "VolunteerMainPage.fxml", "Home", email, firstName, lastName, accountType);
+			} else if (accountType.equals("Admin")){
+				changeScene(event, "AdminMainPage.fxml", "Home", email, firstName, lastName, accountType);
+			}
+
+			// Display confirmation that the event has been created for the user.
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+			alert.setContentText("Your donation has been processed.");
+			alert.show();
+
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// Close all statements that have been used to query and connect to the database.
+			if (resultSet != null) {
+				try {
+					resultSet.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (psInsert != null) {
+				try {
+					psInsert.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (getDonation != null) {
+				try {
+					getDonation.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+
+				}
+			}
+		}
+	}
+
+	/**
+	 * Method used to process an unrestricted donation.
+	 *
+	 * @param event:       		The event that causes the method to run
+	 * @param amount:   		The amount the user is donating
+	 * @param email:       		The unique email of the user
+	 * @param firstName:   		The user's first name
+	 * @param lastName:   		The user's last name
+	 * @param accountType: 		The account type of the user
+	 */
+	public static void processUnrestrictedDonation(ActionEvent event, int amount, String email, String firstName, String lastName, String accountType) {
+		// Set up variables to connect and query the database.
+		Connection connection = null;
+		PreparedStatement psInsert = null;
+		PreparedStatement getDonation = null;
+		ResultSet resultSet = null;
+
+		try {
+			// Connect to the database and create a new donation.
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
+			psInsert = connection.prepareStatement("INSERT INTO donation (Amount) VALUES (?)");
+			psInsert.setInt(1, amount);
+			psInsert.executeUpdate();
+
+			// Get the donation ID that was generated
+			getDonation = connection.prepareStatement("SELECT LAST_INSERT_ID() AS last_id FROM donation");
+			resultSet = getDonation.executeQuery();
+			resultSet.next();
+			int DonationId = resultSet.getInt("last_id");
+
+			// Insert the relationship between the donation and the user.
+			psInsert = connection.prepareStatement("INSERT INTO donated_by (DonationId, Email) VALUES (?, ?)");
+			psInsert.setInt(1, DonationId);
+			psInsert.setString(2, email);
+			psInsert.executeUpdate();
+
+			// Once they have been registered, navigate back to their respective home page.
+			if(accountType.equals("Volunteer") || accountType.equals("Donor")) {
+				changeScene(event, "VolunteerMainPage.fxml", "Home", email, firstName, lastName, accountType);
+			} else if (accountType.equals("Admin")){
+				changeScene(event, "AdminMainPage.fxml", "Home", email, firstName, lastName, accountType);
+			}
+
+			// Display confirmation that the event has been created for the user.
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+			alert.setContentText("Your donation has been processed.");
+			alert.show();
+
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// Close all statements that have been used to query and connect to the database.
+			if (resultSet != null) {
+				try {
+					resultSet.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (psInsert != null) {
+				try {
+					psInsert.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (getDonation != null) {
+				try {
+					getDonation.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+
 				}
 			}
 		}

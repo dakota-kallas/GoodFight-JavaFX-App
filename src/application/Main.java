@@ -23,7 +23,8 @@ public class Main extends Application {
 		// Load the Log in page to start the program and set the window size.
         Parent root = FXMLLoader.load(getClass().getResource("LogIn.fxml"));
         primaryStage.setTitle("Log in!");
-        primaryStage.setScene(new Scene(root, 800, 600));
+		Scene scene = new Scene(root, 800, 600);
+        primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		// Gather the icon resource for the page and load it onto the window
 		Image icon = new Image(getClass().getResourceAsStream("goodfightlogo.png"));

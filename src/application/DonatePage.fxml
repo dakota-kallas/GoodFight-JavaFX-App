@@ -116,12 +116,12 @@
       </VBox>
       <Pane layoutX="175.0" layoutY="26.0" prefHeight="538.0" prefWidth="508.0">
          <children>
-            <Label layoutX="221.0" layoutY="21.0" text="Events:">
+            <Label layoutX="221.0" layoutY="29.0" text="Events:">
                <font>
                   <Font name="Arial Rounded MT Bold" size="18.0" />
                </font>
             </Label>
-            <ListView fx:id="listview_events" layoutX="48.0" layoutY="54.0" prefHeight="208.0" prefWidth="411.0" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #373737;">
+            <ListView fx:id="listview_events" layoutX="48.0" layoutY="64.0" prefHeight="208.0" prefWidth="411.0" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #373737;">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
@@ -170,19 +170,19 @@
                   </Label>
                </children>
             </Pane>
-            <RadioButton fx:id="rd_25" layoutX="87.0" layoutY="451.0" mnemonicParsing="false" scaleX="1.25" scaleY="1.25" selected="true">
+            <RadioButton fx:id="rd_25" layoutX="92.0" layoutY="451.0" mnemonicParsing="false" scaleX="1.25" scaleY="1.25" selected="true" text="25" textFill="TRANSPARENT">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></RadioButton>
-            <RadioButton fx:id="rd_50" layoutX="193.0" layoutY="451.0" mnemonicParsing="false" scaleX="1.25" scaleY="1.25">
+            <RadioButton fx:id="rd_50" layoutX="198.0" layoutY="451.0" mnemonicParsing="false" scaleX="1.25" scaleY="1.25" text="50" textFill="TRANSPARENT">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></RadioButton>
-            <RadioButton fx:id="rd_100" layoutX="299.0" layoutY="451.0" mnemonicParsing="false" scaleX="1.25" scaleY="1.25">
+            <RadioButton fx:id="rd_100" layoutX="305.0" layoutY="451.0" mnemonicParsing="false" scaleX="1.25" scaleY="1.25" text="100" textFill="TRANSPARENT">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></RadioButton>
-            <RadioButton fx:id="rd_250" layoutX="405.0" layoutY="451.0" mnemonicParsing="false" scaleX="1.25" scaleY="1.25">
+            <RadioButton fx:id="rd_250" layoutX="411.0" layoutY="451.0" mnemonicParsing="false" scaleX="1.25" scaleY="1.25" text="250" textFill="TRANSPARENT">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></RadioButton>
@@ -200,7 +200,7 @@
                   <Font size="14.0" />
                </font>
             </TextField>
-            <RadioButton fx:id="rd_other" layoutX="104.0" layoutY="501.0" mnemonicParsing="false" scaleX="1.25" scaleY="1.25">
+            <RadioButton fx:id="rd_other" layoutX="108.0" layoutY="501.0" mnemonicParsing="false" scaleX="1.25" scaleY="1.25" text="other" textFill="TRANSPARENT">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></RadioButton>
@@ -228,6 +228,16 @@
             <Label layoutX="51.0" layoutY="330.0" text="Type:">
                <font>
                   <Font name="Arial Rounded MT Bold" size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="10.0" text="Total Contribution:">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="label_contribution" layoutX="129.0" layoutY="10.0" prefHeight="15.0" prefWidth="94.0" text="\$0.00">
+               <font>
+                  <Font name="Arial Rounded MT" size="12.0" />
                </font>
             </Label>
          </children>
