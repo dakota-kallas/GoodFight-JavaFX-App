@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #262626;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.DonatePageController">
+   <children>
+      <HBox layoutX="538.0" layoutY="9.0" prefHeight="35.0" prefWidth="160.0" />
+      <HBox prefHeight="35.0" prefWidth="142.0" style="-fx-background-color: #373737;">
+         <children>
+            <Label fx:id="label_account_type" alignment="CENTER" prefHeight="35.0" prefWidth="80.0" text="Admin" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+            </Label>
+            <Button fx:id="button_logout" mnemonicParsing="false" prefHeight="35.0" prefWidth="45.0" style="-fx-background-color: transparent;">
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="14.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@logout_icon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+      </HBox>
+      <VBox fx:id="nav_admin" layoutY="35.0" prefHeight="450.0" prefWidth="142.0" style="-fx-background-color: #2b2b2b;">
+         <children>
+            <Button fx:id="button_home" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="Home                 ⮞" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="button_view_events" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="View Event      ⮞" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="button_create_event" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="Create Event   ⮞" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="button_donate" layoutX="10.0" layoutY="88.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: #ffffff;" text="Donate              ⮞" textFill="#373737">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="button_reporting" layoutX="10.0" layoutY="62.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="Reporting         ⮞" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+      </VBox>
+      <VBox layoutY="485.0" prefHeight="115.0" prefWidth="142.0" style="-fx-background-color: #2b2b2b;">
+         <children>
+            <ImageView fitHeight="101.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true" translateX="15.0">
+               <image>
+                  <Image url="@goodfightlogo.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <Pane layoutX="161.0" layoutY="26.0" prefHeight="543.0" prefWidth="639.0">
+         <children>
+            <Label layoutX="287.0" layoutY="25.0" text="Events:" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="18.0" />
+               </font>
+            </Label>
+            <ListView fx:id="listview_events" layoutX="114.0" layoutY="55.0" prefHeight="208.0" prefWidth="411.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #373737; -fx-background-color: #262626;">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ListView>
+            <RadioButton fx:id="rd_100" layoutX="178.0" layoutY="374.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="13.0" scaleX="1.25" scaleY="1.25" text="100" textFill="TRANSPARENT">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </RadioButton>
+            <RadioButton fx:id="rd_250" layoutX="178.0" layoutY="421.0" mnemonicParsing="false" scaleX="1.25" scaleY="1.25" text="250" textFill="TRANSPARENT">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </RadioButton>
+            <RadioButton fx:id="rd_other" layoutX="294.0" layoutY="374.0" mnemonicParsing="false" scaleX="1.25" scaleY="1.25" text="other" textFill="TRANSPARENT">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </RadioButton>
+            <Label layoutX="51.0" layoutY="290.0" text="Donate Now" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="24.0" />
+               </font>
+            </Label>
+            <RadioButton fx:id="rd_restricted" layoutX="99.0" layoutY="331.0" mnemonicParsing="false" text="Event (Restricted)" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </RadioButton>
+            <RadioButton fx:id="rd_unrestricted" layoutX="238.0" layoutY="331.0" mnemonicParsing="false" selected="true" text="General (Unrestricted)" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </RadioButton>
+            <Label layoutX="51.0" layoutY="330.0" text="Type:" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="10.0" text="Total Contribution:" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="label_contribution" layoutX="129.0" layoutY="10.0" prefHeight="15.0" prefWidth="94.0" text="\$0.00" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT" size="12.0" />
+               </font>
+            </Label>
+            <Button fx:id="button_submit_donation" layoutX="-18.0" layoutY="480.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="657.0" style="-fx-background-color: #ec1c2c;" text="Donate" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="14.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <RadioButton fx:id="rd_25" layoutX="52.0" layoutY="374.0" mnemonicParsing="false" selected="true" text="25" textFill="TRANSPARENT">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </RadioButton>
+            <Label layoutX="78.0" layoutY="368.0" text="\$25" textFill="WHITE">
+               <font>
+                  <Font name="Arial" size="25.0" />
+               </font>
+            </Label>
+            <RadioButton fx:id="rd_50" layoutX="52.0" layoutY="420.0" mnemonicParsing="false" text="50" textFill="TRANSPARENT">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </RadioButton>
+            <Label layoutX="78.0" layoutY="414.0" text="\$50" textFill="WHITE">
+               <font>
+                  <Font name="Arial" size="25.0" />
+               </font>
+            </Label>
+            <Label layoutX="202.0" layoutY="368.0" text="\$100" textFill="WHITE">
+               <font>
+                  <Font name="Arial" size="25.0" />
+               </font>
+            </Label>
+            <Label layoutX="202.0" layoutY="415.0" text="\$250" textFill="WHITE">
+               <font>
+                  <Font name="Arial" size="25.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tf_other_amount" layoutX="320.0" layoutY="368.0" prefHeight="26.0" prefWidth="160.0" promptText="Other Amount">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+         </children>
+      </Pane>
+      <ImageView fitHeight="35.0" fitWidth="25.0" layoutX="761.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@profileicon.png" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
+      <Button fx:id="button_profile" layoutX="577.0" layoutY="7.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="217.0" style="-fx-background-color: transparent;">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <Label fx:id="label_name" alignment="CENTER_RIGHT" layoutX="598.0" layoutY="10.0" prefHeight="35.0" prefWidth="159.0" text="Full Name" textFill="WHITE">
+         <font>
+            <Font name="Arial Rounded MT Bold" size="12.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
