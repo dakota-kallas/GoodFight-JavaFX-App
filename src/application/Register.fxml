@@ -16,12 +16,12 @@
    <children>
       <AnchorPane prefHeight="400.0" prefWidth="190.0" style="-fx-background-color: #2b2b2b;">
          <children>
-            <Label layoutX="49.0" layoutY="317.0" text="FIGHT" textAlignment="CENTER" textFill="WHITE" translateX="5.0" translateY="20.0">
+            <Label alignment="CENTER" layoutX="44.0" layoutY="317.0" text="FIGHT" textAlignment="CENTER" textFill="WHITE" translateX="5.0" translateY="20.0">
                <font>
                   <Font name="Rockwell Extra Bold" size="25.0" />
                </font>
             </Label>
-            <Label layoutX="16.0" layoutY="283.0" prefHeight="40.0" prefWidth="157.0" text="THE GOOD" textFill="WHITE" translateX="10.0" translateY="20.0">
+            <Label alignment="CENTER" layoutX="1.0" layoutY="283.0" prefHeight="40.0" prefWidth="171.0" text="THE GOOD" textFill="WHITE" translateX="10.0" translateY="20.0">
                <font>
                   <Font name="Rockwell Extra Bold" size="25.0" />
                </font>
@@ -33,7 +33,7 @@
             </ImageView>
          </children>
       </AnchorPane>
-      <AnchorPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #262626;">
+      <AnchorPane prefHeight="600.0" prefWidth="610.0" style="-fx-background-color: #262626;">
          <children>
             <Label layoutX="118.0" layoutY="91.0" prefHeight="23.0" prefWidth="115.0" text="First Name:" textAlignment="CENTER" textFill="WHITE">
                <font>

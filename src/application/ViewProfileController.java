@@ -18,12 +18,12 @@ public class ViewProfileController implements Initializable{
 	
 	@FXML private Button button_logout;
 	@FXML private Button button_home;
-	@FXML private Button button_home_a;
 	@FXML private Button button_create_event;
 	@FXML private Button button_view_events;
-	@FXML private Button button_view_events_a;
+	@FXML private Button button_donate;
 	@FXML private Button button_profile;
-	@FXML private Button button_donate_a;
+	@FXML private Button button_reporting;
+
 
 	@FXML private Button button_save;
 
@@ -37,8 +37,7 @@ public class ViewProfileController implements Initializable{
 	@FXML private Label label_name;
 	@FXML private Label label_account_type;
 
-	@FXML private VBox nav_admin;
-	@FXML private VBox nav_volunteer;
+	@FXML private VBox navbar;
 
 	private String firstName = "",lastName = "", email = "", accountType = "";
 
@@ -66,20 +65,15 @@ public class ViewProfileController implements Initializable{
 			}
 		}));
 
-
-		// Assigned the action that is caused by the "Home" button being clicked an admin.
-		button_home_a.setOnAction((new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				DBUtils.changeScene(event, "AdminMainPage.fxml", "Home", email, firstName, lastName, accountType);
-			}
-		}));
-
 		// Assigned the action that is caused by the "Home" button being clicked.
 		button_home.setOnAction((new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				DBUtils.changeScene(event, "VolunteerMainPage.fxml", "Home", email, firstName, lastName, accountType);
+				if(accountType.equals("Volunteer") || accountType.equals("Donor")) {
+					DBUtils.changeScene(event, "VolunteerMainPage.fxml", "Home", email, firstName, lastName, accountType);
+				} else if (accountType.equals("Admin")){
+					DBUtils.changeScene(event, "AdminMainPage.fxml", "Home", email, firstName, lastName, accountType);
+				}
 			}
 		}));
 
@@ -88,14 +82,6 @@ public class ViewProfileController implements Initializable{
 			@Override
 			public void handle(ActionEvent event) {
 				DBUtils.changeScene(event, "CreateEvent.fxml", "Create an Event", email, firstName, lastName, accountType);
-			}
-		}));
-
-		// Assigned the action that is caused by the "View Events" button being clicked by an admin.
-		button_view_events_a.setOnAction((new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				DBUtils.changeScene(event, "ViewEvents.fxml", "View Available Events", email, firstName, lastName, accountType);
 			}
 		}));
 
@@ -108,7 +94,7 @@ public class ViewProfileController implements Initializable{
 		}));
 
 		// Assigned the action that is caused by the "Donate" button being clicked by an admin.
-		button_donate_a.setOnAction((new EventHandler<ActionEvent>() {
+		button_donate.setOnAction((new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				DBUtils.changeScene(event, "DonatePage.fxml", "Donate", email, firstName, lastName, accountType);
@@ -142,18 +128,21 @@ public class ViewProfileController implements Initializable{
 		tf_edit_last_name.setText(lastName);
 
 		// Configure the sidebar navigation
-		if (accountType.equals("Admin")) {
-			nav_admin.setVisible(true);
-			nav_admin.setManaged(true);
+		if (accountType.equals("Donor")) {
+			button_create_event.setVisible(false);
+			button_create_event.setManaged(false);
 
-			nav_volunteer.setVisible(false);
-			nav_volunteer.setManaged(false);
-		} else {
-			nav_volunteer.setVisible(true);
-			nav_volunteer.setManaged(true);
+			button_reporting.setVisible(false);
+			button_reporting.setManaged(false);
+		} else if (accountType.equals("Volunteer")) {
+			button_create_event.setVisible(false);
+			button_create_event.setManaged(false);
 
-			nav_admin.setVisible(false);
-			nav_admin.setManaged(false);
+			button_reporting.setVisible(false);
+			button_reporting.setManaged(false);
+
+			button_donate.setVisible(false);
+			button_donate.setManaged(false);
 		}
 	}
 }

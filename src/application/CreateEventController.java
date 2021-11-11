@@ -133,14 +133,14 @@ public class CreateEventController implements Initializable{
 				int endTime = 0;
 
 				// Calculate the start time of the event (convert to 24-hour time)
-				if(spinner_start_time_ampm.getValue().toString().equals("PM")) {
+				if(spinner_start_time_ampm.getValue().toString().equals("PM") && ((int) spinner_start_time.getValue() != 12)) {
 					startTime = (int) spinner_start_time.getValue() + 12;
 				} else {
 					startTime = (int) spinner_start_time.getValue();
 				}
 
 				// Calculate the end time of the event (convert to 24-hour time)
-				if(spinner_end_time_ampm.getValue().toString().equals("PM")) {
+				if(spinner_end_time_ampm.getValue().toString().equals("PM") && ((int) spinner_end_time.getValue() != 12)) {
 					endTime = (int) spinner_end_time.getValue() + 12;
 				} else {
 					endTime = (int) spinner_end_time.getValue();
@@ -158,6 +158,7 @@ public class CreateEventController implements Initializable{
 				String date = dp_select_date.getValue().toString();
 				String location = tf_location.getText();
 
+				System.out.println(startTime + " " + endTime);
 				DBUtils.createEvent(event, eventName, date, location, (int) spinner_spots.getValue(), startTime, endTime, email, firstName, lastName, accountType);
 				System.out.println("You've created an event! :)");
 			}

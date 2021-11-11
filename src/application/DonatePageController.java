@@ -19,6 +19,7 @@ public class DonatePageController implements Initializable{
 	@FXML private Button button_view_events;
 	@FXML private Button button_profile;
 	@FXML private Button button_donate;
+	@FXML private Button button_reporting;
 
 	@FXML private ListView listview_events;
 	@FXML private RadioButton rd_restricted;
@@ -80,7 +81,11 @@ public class DonatePageController implements Initializable{
 		button_home.setOnAction((new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				DBUtils.changeScene(event, "AdminMainPage.fxml", "Home", email, firstName, lastName, accountType);
+				if(accountType.equals("Volunteer") || accountType.equals("Donor")) {
+					DBUtils.changeScene(event, "VolunteerMainPage.fxml", "Home", email, firstName, lastName, accountType);
+				} else if (accountType.equals("Admin")){
+					DBUtils.changeScene(event, "AdminMainPage.fxml", "Home", email, firstName, lastName, accountType);
+				}
 			}
 		}));
 
@@ -161,6 +166,24 @@ public class DonatePageController implements Initializable{
 
 		label_name.setText(firstName + " " + lastName);
 		label_account_type.setText(accountType);
+
+		// Configure the sidebar navigation
+		if (accountType.equals("Donor")) {
+			button_create_event.setVisible(false);
+			button_create_event.setManaged(false);
+
+			button_reporting.setVisible(false);
+			button_reporting.setManaged(false);
+		} else if (accountType.equals("Volunteer")) {
+			button_create_event.setVisible(false);
+			button_create_event.setManaged(false);
+
+			button_reporting.setVisible(false);
+			button_reporting.setManaged(false);
+
+			button_donate.setVisible(false);
+			button_donate.setManaged(false);
+		}
 
 		// Configure the ListView to display all the events
 		Connection connection = null;

@@ -19,6 +19,7 @@ public class VolunteerLoggedInController implements Initializable{
 	@FXML private Button button_home;
 	@FXML private Button button_profile;
 	@FXML private Button button_view_events;
+	@FXML private Button button_donate;
 
 	@FXML private ListView listview_my_events;
 	@FXML private Button button_cancel;
@@ -65,6 +66,14 @@ public class VolunteerLoggedInController implements Initializable{
 			}
 		}));
 
+		// Assigned the action that is caused by the "Donate" button being clicked.
+		button_donate.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				DBUtils.changeScene(event, "DonatePage.fxml", "Donate", email, firstName, lastName, accountType);
+			}
+		}));
+
 		// Assigned the action that is caused by the "View Events" button being clicked.
 		button_cancel.setOnAction((new EventHandler<ActionEvent>() {
 			@Override
@@ -95,6 +104,15 @@ public class VolunteerLoggedInController implements Initializable{
 
 		label_name.setText(firstName + " " + lastName);
 		label_account_type.setText(accountType);
+
+		// Check user type to configure navigation bar
+		if(accountType.equals("Donor")) {
+			button_donate.setVisible(true);
+			button_donate.setManaged(true);
+		} else {
+			button_donate.setVisible(false);
+			button_donate.setManaged(false);
+		}
 
 		// Configure the ListView to display all the user's events
 		Connection connection = null;

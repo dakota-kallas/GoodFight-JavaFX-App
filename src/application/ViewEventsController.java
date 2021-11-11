@@ -17,12 +17,11 @@ public class ViewEventsController implements Initializable{
 
 	@FXML private Button button_logout;
 	@FXML private Button button_home;
-	@FXML private Button button_home_a;
 	@FXML private Button button_view_events;
-	@FXML private Button button_view_events_a;
-	@FXML private Button button_donate_a;
+	@FXML private Button button_donate;
 	@FXML private Button button_profile;
 	@FXML private Button button_create_event;
+	@FXML private Button button_reporting;
 
 	@FXML private Button button_view_more;
 
@@ -43,8 +42,7 @@ public class ViewEventsController implements Initializable{
 	@FXML private Label label_name;
 	@FXML private Label label_account_type;
 
-	@FXML private VBox nav_admin;
-	@FXML private VBox nav_volunteer;
+	@FXML private VBox navbar;
 
 	private String firstName = "",lastName = "", email = "", accountType = "";
 
@@ -123,19 +121,11 @@ public class ViewEventsController implements Initializable{
 		button_home.setOnAction((new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if(accountType.equals("Volunteer")) {
+				if(accountType.equals("Volunteer") || accountType.equals("Donor")) {
 					DBUtils.changeScene(event, "VolunteerMainPage.fxml", "Home", email, firstName, lastName, accountType);
-				} else if (accountType.equals("Donor")){
-					DBUtils.changeScene(event, "VolunteerMainPage.fxml", "Home", email, firstName, lastName, accountType);
+				} else if (accountType.equals("Admin")){
+					DBUtils.changeScene(event, "AdminMainPage.fxml", "Home", email, firstName, lastName, accountType);
 				}
-			}
-		}));
-
-		// Assigned the action that is caused by the "Home" button being clicked by an admin.
-		button_home_a.setOnAction((new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				DBUtils.changeScene(event, "AdminMainPage.fxml", "Home", email, firstName, lastName, accountType);
 			}
 		}));
 
@@ -163,16 +153,9 @@ public class ViewEventsController implements Initializable{
 			}
 		}));
 
-		// Assigned the action that is caused by the "View Events" button being clicked by an admin.
-		button_view_events_a.setOnAction((new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				DBUtils.changeScene(event, "ViewEvents.fxml", "View Available Events", email, firstName, lastName, accountType);
-			}
-		}));
 
 		// Assigned the action that is caused by the "Donate" button being clicked by an admin.
-		button_donate_a.setOnAction((new EventHandler<ActionEvent>() {
+		button_donate.setOnAction((new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				DBUtils.changeScene(event, "DonatePage.fxml", "Donate", email, firstName, lastName, accountType);
@@ -212,15 +195,29 @@ public class ViewEventsController implements Initializable{
 						String eventEdTime = resultSet.getTime("DtEnd").toString();
 						int spotsAvailable = resultSet.getInt("SpotsAvailable");
 						String dateStart = resultSet.getDate("DtStart").toString();
+						int startTime = Integer.valueOf(resultSet.getTime("DtStart").toString().substring(0,2));
 						String dateEnd = resultSet.getDate("DtEnd").toString();
+						int endTime = Integer.valueOf(resultSet.getTime("DtEnd").toString().substring(0,2));
 						int donations = resultSet.getInt("TotalDonations");
+
+						// Determine if the time is in AM or PM
+						String startAMPM = "AM";
+						String endAMPM = "AM";
+						if(startTime > 12) {
+							startAMPM = "PM";
+							startTime = startTime % 12;
+						}
+						if(endTime > 12) {
+							endAMPM = "PM";
+							endTime = endTime % 12;
+						}
 
 						// Set the information for the popup
 						label_event_id.setText("[" + eventId + "]");
 						label_event_name.setText(eventName);
 						label_event_location.setText(eventLocation);
-						label_event_start_dt.setText(dateStart);
-						label_event_end_dt.setText(dateEnd);
+						label_event_start_dt.setText(dateStart + " @ " + startTime + startAMPM);
+						label_event_end_dt.setText(dateEnd + " @ " + endTime + endAMPM);
 						label_event_spots_available.setText(spotsAvailable + "");
 						label_event_donations.setText("$" + donations);
 
@@ -301,22 +298,25 @@ public class ViewEventsController implements Initializable{
 		label_name.setText(firstName + " " + lastName);
 		label_account_type.setText(accountType);
 
+		// Configure the sidebar navigation
+		if (accountType.equals("Donor")) {
+			button_create_event.setVisible(false);
+			button_create_event.setManaged(false);
+
+			button_reporting.setVisible(false);
+			button_reporting.setManaged(false);
+		} else if (accountType.equals("Volunteer")) {
+			button_create_event.setVisible(false);
+			button_create_event.setManaged(false);
+
+			button_reporting.setVisible(false);
+			button_reporting.setManaged(false);
+
+			button_donate.setVisible(false);
+			button_donate.setManaged(false);
+		}
+
 		pane_event_view.setVisible(false);
 		pane_event_view.setManaged(false);
-
-		// Configure the sidebar navigation
-		if (accountType.equals("Admin")) {
-			nav_admin.setVisible(true);
-			nav_admin.setManaged(true);
-
-			nav_volunteer.setVisible(false);
-			nav_volunteer.setManaged(false);
-		} else {
-			nav_volunteer.setVisible(true);
-			nav_volunteer.setManaged(true);
-
-			nav_admin.setVisible(false);
-			nav_admin.setManaged(false);
-		}
 	}
 }

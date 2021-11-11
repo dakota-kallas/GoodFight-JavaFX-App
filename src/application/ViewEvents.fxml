@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #262626;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ViewEventsController">
@@ -42,12 +41,12 @@
       </HBox>
       <HBox prefHeight="35.0" prefWidth="142.0" style="-fx-background-color: #373737;">
          <children>
-            <Label fx:id="label_account_type" alignment="CENTER" prefHeight="35.0" prefWidth="80.0" text="Account" textFill="WHITE">
+            <Label fx:id="label_account_type" alignment="CENTER" prefHeight="35.0" prefWidth="99.0" text="Account" textFill="WHITE">
                <font>
                   <Font name="Arial Rounded MT Bold" size="12.0" />
                </font>
             </Label>
-            <Button fx:id="button_logout" mnemonicParsing="false" prefHeight="35.0" prefWidth="31.0" style="-fx-background-color: transparent;">
+            <Button fx:id="button_logout" mnemonicParsing="false" prefHeight="35.0" prefWidth="30.0" style="-fx-background-color: transparent;">
                <graphic>
                   <ImageView fitHeight="18.0" fitWidth="14.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -61,6 +60,73 @@
             </Button>
          </children>
       </HBox>
+      <VBox layoutY="485.0" prefHeight="115.0" prefWidth="142.0" style="-fx-background-color: #2b2b2b;">
+         <children>
+            <ImageView fitHeight="100.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true" translateX="15.0">
+               <image>
+                  <Image url="@goodfightlogo.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <Pane layoutX="229.0" layoutY="58.0" prefHeight="487.0" prefWidth="442.0" style="-fx-border-radius: 10; -fx-background-radius: 10;">
+         <children>
+            <ListView fx:id="listview_events" layoutX="14.0" layoutY="42.0" prefHeight="379.0" prefWidth="411.0" style="-fx-background-color: #262626; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #373737;">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ListView>
+            <Label layoutX="154.0" layoutY="4.0" text="Available Events:" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="16.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <VBox fx:id="navbar" layoutY="35.0" prefHeight="450.0" prefWidth="142.0" style="-fx-background-color: #2b2b2b;">
+         <children>
+            <Button fx:id="button_home" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="Home                 ⮞" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="button_view_events" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: #ffffff;" text="View Events     ⮞" textFill="#373737">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="button_donate" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="Donate              ⮞" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="button_create_event" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="Create Event   ⮞" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="button_reporting" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="Reporting         ⮞" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+      </VBox>
       <Pane fx:id="pane_event_view" layoutX="300.0" layoutY="125.0" prefHeight="310.0" prefWidth="300.0" style="-fx-background-color: #ffffff; -fx-border-color: #373737; -fx-border-radius: 8; -fx-background-radius: 8; -fx-border-width: 3;">
          <children>
             <Label fx:id="label_event_name" alignment="CENTER" layoutX="26.0" layoutY="23.0" prefHeight="20.0" prefWidth="248.0" text="Event Name" textAlignment="CENTER">
@@ -73,12 +139,12 @@
                   <Font name="Arial Rounded MT" size="12.0" />
                </font>
             </Label>
-            <Label fx:id="label_event_start_dt" layoutX="110.0" layoutY="90.0" prefHeight="15.0" prefWidth="111.0" text="2021-10-30">
+            <Label fx:id="label_event_start_dt" layoutX="110.0" layoutY="90.0" prefHeight="15.0" prefWidth="154.0" text="2021-10-30">
                <font>
                   <Font name="Arial Rounded MT" size="12.0" />
                </font>
             </Label>
-            <Label fx:id="label_event_end_dt" layoutX="110.0" layoutY="134.0" prefHeight="15.0" prefWidth="111.0" text="2021-10-30">
+            <Label fx:id="label_event_end_dt" layoutX="110.0" layoutY="134.0" prefHeight="15.0" prefWidth="154.0" text="2021-10-30">
                <font>
                   <Font name="Arial Rounded MT" size="12.0" />
                </font>
@@ -156,101 +222,10 @@
             </ImageView>
          </children>
          <effect>
-            <DropShadow blurType="GAUSSIAN" height="36.39" radius="17.5125" width="35.66">
-               <color>
-                  <Color red="0.5263158082962036" green="0.5263158082962036" blue="0.5263158082962036" />
-               </color>
-            </DropShadow>
+            <DropShadow blurType="GAUSSIAN" height="36.03" radius="17.4225" width="35.66" />
          </effect>
       </Pane>
-      <VBox layoutY="485.0" prefHeight="115.0" prefWidth="142.0" style="-fx-background-color: #2b2b2b;">
-         <children>
-            <ImageView fitHeight="100.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true" translateX="15.0">
-               <image>
-                  <Image url="@goodfightlogo.png" />
-               </image>
-            </ImageView>
-         </children>
-      </VBox>
-      <Pane layoutX="229.0" layoutY="58.0" prefHeight="487.0" prefWidth="442.0" style="-fx-border-radius: 10; -fx-background-radius: 10;">
-         <children>
-            <ListView fx:id="listview_events" layoutX="14.0" layoutY="42.0" prefHeight="379.0" prefWidth="411.0" style="-fx-background-color: #262626; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #373737;">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ListView>
-            <Label layoutX="154.0" layoutY="4.0" text="Available Events:" textFill="WHITE">
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="16.0" />
-               </font>
-            </Label>
-         </children>
-      </Pane>
-      <VBox fx:id="nav_admin" layoutY="35.0" prefHeight="450.0" prefWidth="142.0" style="-fx-background-color: #2b2b2b;">
-         <children>
-            <Button fx:id="button_home_a" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="Home                 ⮞" textFill="WHITE">
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="12.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-            <Button fx:id="button_view_events_a" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: #ffffff;" text="View Event      ⮞" textFill="#373737">
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="12.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-            <Button fx:id="button_create_event" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="Create Event   ⮞" textFill="WHITE">
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="12.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-            <Button fx:id="button_donate_a" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="Donate              ⮞" textFill="WHITE">
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="12.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-            <Button fx:id="button_reporting" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="Reporting         ⮞" textFill="WHITE">
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="12.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-         </children>
-      </VBox>
-      <VBox fx:id="nav_volunteer" layoutY="35.0" prefHeight="450.0" prefWidth="142.0" style="-fx-background-color: #2b2b2b;">
-         <children>
-            <Button fx:id="button_home" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="Home                 ⮞" textFill="WHITE">
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="12.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-            <Button fx:id="button_view_events" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: #ffffff;" text="View Events    ⮞" textFill="#373737">
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="12.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-         </children>
-      </VBox>
-      <Button fx:id="button_view_more" layoutX="142.0" layoutY="520.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="658.0" style="-fx-background-color: #ec1c2c;" text="View Selected" textFill="WHITE">
+      <Button fx:id="button_view_more" layoutX="143.0" layoutY="500.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="658.0" style="-fx-background-color: #ec1c2c;" text="View Selected" textFill="WHITE">
          <font>
             <Font name="Arial Rounded MT Bold" size="12.0" />
          </font>

@@ -12,7 +12,13 @@
 package application;
 
 import java.io.IOException;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
+import java.util.Base64;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -99,6 +105,42 @@ public class DBUtils {
 		PreparedStatement psCheckUserExists = null;
 		ResultSet resultSet = null;
 
+		/**
+		 *   Password hashing through PBKDF2
+		 * 	 - one of the most widely adopted government standardized password hashing algorithms
+		 **/
+
+		// Change password string into a char array
+		char[] charArrPass = password.toCharArray();
+
+		// Create a cryptographically secure pseudo-random number generator (CSPRING) and use it to make a
+		// 4 byte long random byte array to use as salt for password encryption.
+		SecureRandom secRan = new SecureRandom();
+		byte[] salt = new byte[8];
+		secRan.nextBytes(salt);
+
+		// Create a key factory using SHA-512 algorithm with HMAC
+		SecretKeyFactory pbkdf2KeyFactory = null;
+		try {
+			pbkdf2KeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+
+		// Create keySpec and pass it the password char array, salt byte array, # of iterations, and ending password length
+		PBEKeySpec keySpec = new PBEKeySpec(charArrPass,	// Input character array of password
+				salt, 		// CSPRNG, unique
+				10000, 		// Iteration count (c) 10,000 (150k recommended, too CPU intense)
+				256     ); 	// 256 bits output hashed password
+
+		// Computes hashed password using PBKDF2HMACSHA512 algorithm and provided PBE specs.
+		byte[] hashedPassArr = null;
+		try {
+			hashedPassArr = pbkdf2KeyFactory.generateSecret(keySpec).getEncoded() ;
+		} catch (InvalidKeySpecException e) {
+			e.printStackTrace();
+		}
+
 		try {
 			// Connect to the database and run the query to gather all current users.
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
@@ -114,12 +156,13 @@ public class DBUtils {
 				alert.show();
 			// If no error is found, insert the user information into the database.
 			} else {
-				psInsert = connection.prepareStatement("INSERT INTO user (Email, Password, Type, FirstName, LastName) VALUES (?, ?, ?, ?, ?)");
+				psInsert = connection.prepareStatement("INSERT INTO user (Email, Password, Type, FirstName, LastName, Salt) VALUES (?, ?, ?, ?, ?, ?)");
 				psInsert.setString(1, email);
-				psInsert.setString(2, password);
+				psInsert.setString(2, Base64.getEncoder().encodeToString(hashedPassArr)); //convert byte array password to string for storage
 				psInsert.setString(3, accountType);
 				psInsert.setString(4, firstName);
 				psInsert.setString(5, lastName);
+				psInsert.setString(6, Base64.getEncoder().encodeToString(salt)); //convert byte array salt to string for storage
 				psInsert.executeUpdate();
 
 				// Confirm with the user that their account has been created.
@@ -402,6 +445,7 @@ public class DBUtils {
 		Connection connection = null;
 		PreparedStatement psInsert = null;
 		PreparedStatement psCheckUserRegistered = null;
+		PreparedStatement psCheckSpots = null;
 		ResultSet resultSet = null;
 
 		try {
@@ -418,32 +462,90 @@ public class DBUtils {
 				Alert alert = new Alert(Alert.AlertType.ERROR);
 				alert.setContentText("You cannot register for the same event twice.");
 				alert.show();
-			} else {
-				// If no errors occur, insert the user and the event they wish to attend into the 'attended' table.
-				psInsert = connection.prepareStatement("INSERT INTO attended (EventId, Email, TimeAttended) VALUES (?, ?, ?)");
-				psInsert.setInt(1, eventId);
-				psInsert.setString(2, email);
-				psInsert.setString(3, date + " 08:00:00");
-				psInsert.executeUpdate();
-
-				// Update the amount of available spots for the event.
-				psInsert = connection.prepareStatement("UPDATE event SET SpotsAvailable = (SpotsAvailable - 1) WHERE EventId = ?");
-				psInsert.setInt(1, eventId);
-				psInsert.executeUpdate();
-
-				// Once they have been registered, navigate back to their respective home page.
-				if(accountType.equals("Volunteer") || accountType.equals("Donor")) {
-					changeScene(event, "VolunteerMainPage.fxml", "Home", email, firstName, lastName, accountType);
-				} else if (accountType.equals("Admin")){
-					changeScene(event, "AdminMainPage.fxml", "Home", email, firstName, lastName, accountType);
-				}
-				
-				// Display confirmation that the event has been created for the user.
-				Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-				alert.setContentText("Event registration complete.");
-				alert.show();
-
+				return;
 			}
+
+			// Check how many spots are available in the event
+			psCheckSpots = connection.prepareStatement("SELECT SpotsAvailable, DtStart, DtEnd FROM event WHERE EventId = ?");
+			psCheckSpots.setInt(1, eventId);
+			resultSet = psCheckSpots.executeQuery();
+			resultSet.next();
+			int spotsAvailable = resultSet.getInt("SpotsAvailable");
+
+			if(spotsAvailable <= 0) {
+				System.out.println("This event is full.");
+				Alert alert = new Alert(Alert.AlertType.ERROR);
+				alert.setContentText("This event is at its maximum number of volunteers.");
+				alert.show();
+				return;
+			}
+
+			// Check if the user is already registered for an event at the same time as this event
+			Date startDate = resultSet.getDate("DtStart");
+			Time startTime = resultSet.getTime("DtStart");
+			Date endDate = resultSet.getDate("DtEnd");
+			Time endTime = resultSet.getTime("DtEnd");
+			psCheckUserRegistered = connection.prepareStatement("SELECT EventId, DtStart, DtEnd FROM attended NATURAL JOIN event WHERE Email = ?");
+			psCheckUserRegistered.setString(1, email);
+			resultSet = psCheckUserRegistered.executeQuery();
+
+			while(resultSet.next()) {
+				// Check if the dates are the same
+				if(resultSet.getDate("DtStart").equals(startDate)) {
+					int curStartTime = Integer.valueOf(resultSet.getTime("DtStart").toString().substring(0,2));
+					int curEndTime = Integer.valueOf(resultSet.getTime("DtEnd").toString().substring(0,2));
+
+					// Check if the event starts while another event the user is attending is going on
+					if(curStartTime < Integer.valueOf(endTime.toString().substring(0,2)) && curStartTime > Integer.valueOf(startTime.toString().substring(0,2))) {
+						System.out.println("This event is is at the same time as another the user is registered for.");
+						Alert alert = new Alert(Alert.AlertType.ERROR);
+						alert.setContentText("This event conflicts with another event you are registered for.");
+						alert.show();
+						return;
+					}
+					// Check if the event ends while another event the user is attending is going on
+					else if (curEndTime < Integer.valueOf(endTime.toString().substring(0,2)) && curEndTime > Integer.valueOf(startTime.toString().substring(0,2))) {
+						System.out.println("This event is is at the same time as another the user is registered for.");
+						Alert alert = new Alert(Alert.AlertType.ERROR);
+						alert.setContentText("This event conflicts with another event you are registered for.");
+						alert.show();
+						return;
+					}
+					// Check if they start or end at the same time
+					else if (curEndTime == Integer.valueOf(endTime.toString().substring(0,2)) || curStartTime == Integer.valueOf(startTime.toString().substring(0,2))) {
+						System.out.println("This event is is at the same time as another the user is registered for.");
+						Alert alert = new Alert(Alert.AlertType.ERROR);
+						alert.setContentText("This event conflicts with another event you are registered for.");
+						alert.show();
+						return;
+					}
+				}
+			}
+
+			// If no errors occur, insert the user and the event they wish to attend into the 'attended' table.
+			psInsert = connection.prepareStatement("INSERT INTO attended (EventId, Email, TimeAttended) VALUES (?, ?, ?)");
+			psInsert.setInt(1, eventId);
+			psInsert.setString(2, email);
+			psInsert.setString(3, date + " 08:00:00");
+			psInsert.executeUpdate();
+
+			// Update the amount of available spots for the event.
+			psInsert = connection.prepareStatement("UPDATE event SET SpotsAvailable = (SpotsAvailable - 1) WHERE EventId = ?");
+			psInsert.setInt(1, eventId);
+			psInsert.executeUpdate();
+
+			// Once they have been registered, navigate back to their respective home page.
+			if (accountType.equals("Volunteer") || accountType.equals("Donor")) {
+				changeScene(event, "VolunteerMainPage.fxml", "Home", email, firstName, lastName, accountType);
+			} else if (accountType.equals("Admin")) {
+				changeScene(event, "AdminMainPage.fxml", "Home", email, firstName, lastName, accountType);
+			}
+
+			// Display confirmation that the event has been created for the user.
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+			alert.setContentText("Event registration complete.");
+			alert.show();
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -557,10 +659,13 @@ public class DBUtils {
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 
+		// Convert string password to char array to prepare for encrypting
+		char[] charArrInputPass = password.toCharArray();
+
 		try {
-			// Connect to the database and run the query to gather the user information from the database.
+			// Connect to the database and run the query to gather the user information from the database
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
-			preparedStatement = connection.prepareStatement("SELECT Password, Type, FirstName, LastName FROM user WHERE Email = ?");
+			preparedStatement = connection.prepareStatement("SELECT Password, Type, FirstName, LastName, Salt FROM user WHERE Email = ?");
 			preparedStatement.setString(1, email);
 			resultSet = preparedStatement.executeQuery();
 
@@ -577,7 +682,32 @@ public class DBUtils {
 					String retrievedAccountType = resultSet.getString("Type");
 					String retrievedFirstName = resultSet.getString("FirstName");
 					String retrievedLastName = resultSet.getString("LastName");
-					if (retrievedPassword.equals(password)) {
+					String retrievedSalt = resultSet.getString("Salt");
+
+					//create key factory
+					SecretKeyFactory pbkdf2KeyFactory = null;
+					try {
+						pbkdf2KeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+					} catch (NoSuchAlgorithmException e) {
+						e.printStackTrace();
+					}
+
+					//create keySpec and pass it the password char array, salt converted from string to byte array, # of iterations, and ending password length
+					PBEKeySpec keySpec = new PBEKeySpec(charArrInputPass,	// Input character array of password
+							Base64.getDecoder().decode(retrievedSalt), 		// CSPRNG, unique
+							10000, 		// Iteration count (c) 10,000 (150k recommended, too CPU intense)
+							256     ); 	// 256 bits output hashed password
+
+					//Computes hashed password using salt from database.
+					byte[] hashedInputPass = null;
+					try {
+						hashedInputPass = pbkdf2KeyFactory.generateSecret(keySpec).getEncoded() ;
+					} catch (InvalidKeySpecException e) {
+						e.printStackTrace();
+					}
+
+					//compare the string converted hashed password from the database to the newly string converted hashed password
+					if (retrievedPassword.equals(Base64.getEncoder().encodeToString(hashedInputPass))) {
 						// Load the correct landing page
 						if (retrievedAccountType.equals("Volunteer") || retrievedAccountType.equals("Donor")) {
 							changeScene(event, "VolunteerMainPage.fxml", "Home", email, retrievedFirstName, retrievedLastName, retrievedAccountType);

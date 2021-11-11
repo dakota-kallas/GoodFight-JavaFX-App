@@ -40,12 +40,12 @@
       </HBox>
       <HBox prefHeight="35.0" prefWidth="142.0" style="-fx-background-color: #373737;">
          <children>
-            <Label fx:id="label_account_type" alignment="CENTER" prefHeight="35.0" prefWidth="80.0" text="Volunteer" textFill="WHITE">
+            <Label fx:id="label_account_type" alignment="CENTER" prefHeight="35.0" prefWidth="99.0" text="Volunteer" textFill="WHITE">
                <font>
                   <Font name="Arial Rounded MT Bold" size="12.0" />
                </font>
             </Label>
-            <Button fx:id="button_logout" mnemonicParsing="false" prefHeight="35.0" prefWidth="31.0" style="-fx-background-color: transparent;">
+            <Button fx:id="button_logout" mnemonicParsing="false" prefHeight="35.0" prefWidth="30.0" style="-fx-background-color: transparent;">
                <graphic>
                   <ImageView fitHeight="18.0" fitWidth="14.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -70,6 +70,14 @@
                </cursor>
             </Button>
             <Button fx:id="button_view_events" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="View Events    ⮞" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="button_donate" mnemonicParsing="false" prefHeight="60.0" prefWidth="142.0" style="-fx-background-color: transparent;" text="Donate              ⮞" textFill="WHITE">
                <font>
                   <Font name="Arial Rounded MT Bold" size="12.0" />
                </font>
@@ -102,7 +110,7 @@
             </Label>
          </children>
       </Pane>
-      <Button fx:id="button_cancel" layoutX="142.0" layoutY="504.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="658.0" style="-fx-background-color: #ec1c2c;" text="Cancel Registration" textFill="WHITE">
+      <Button fx:id="button_cancel" layoutX="143.0" layoutY="500.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="658.0" style="-fx-background-color: #ec1c2c;" text="Cancel Registration" textFill="WHITE">
          <font>
             <Font name="Arial Rounded MT Bold" size="12.0" />
          </font>
