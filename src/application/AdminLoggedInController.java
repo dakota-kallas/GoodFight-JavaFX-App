@@ -21,6 +21,7 @@ public class AdminLoggedInController implements Initializable{
 	@FXML private Button button_view_events;
 	@FXML private Button button_profile;
 	@FXML private Button button_donate;
+	@FXML private Button button_reporting;
 
 	@FXML private ListView listview_my_events;
 	@FXML private Button button_cancel;
@@ -86,6 +87,14 @@ public class AdminLoggedInController implements Initializable{
 			@Override
 			public void handle(ActionEvent event) {
 				DBUtils.changeScene(event, "DonatePage.fxml", "Donate", email, firstName, lastName, accountType);
+			}
+		}));
+
+		// Assigned the action that is caused by the "Reporting" button being clicked.
+		button_reporting.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				DBUtils.changeScene(event, "Reporting.fxml", "Reporting", email, firstName, lastName, accountType);
 			}
 		}));
 

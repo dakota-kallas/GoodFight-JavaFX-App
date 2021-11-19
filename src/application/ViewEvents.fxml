@@ -139,12 +139,12 @@
                   <Font name="Arial Rounded MT" size="12.0" />
                </font>
             </Label>
-            <Label fx:id="label_event_start_dt" layoutX="110.0" layoutY="90.0" prefHeight="15.0" prefWidth="154.0" text="2021-10-30">
+            <Label fx:id="label_event_start_dt" layoutX="110.0" layoutY="90.0" prefHeight="15.0" prefWidth="154.0" text="2021-10-30 @ 9AM">
                <font>
                   <Font name="Arial Rounded MT" size="12.0" />
                </font>
             </Label>
-            <Label fx:id="label_event_end_dt" layoutX="110.0" layoutY="134.0" prefHeight="15.0" prefWidth="154.0" text="2021-10-30">
+            <Label fx:id="label_event_end_dt" layoutX="110.0" layoutY="134.0" prefHeight="15.0" prefWidth="154.0" text="2021-10-30 @ 11AM">
                <font>
                   <Font name="Arial Rounded MT" size="12.0" />
                </font>
@@ -159,14 +159,6 @@
                   <Font name="Arial Rounded MT" size="10.0" />
                </font>
             </Label>
-            <Button fx:id="button_event_register" layoutX="217.0" layoutY="269.0" mnemonicParsing="false" style="-fx-background-color: #ec1c2c;" text="Register" textFill="WHITE">
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="12.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
             <Button fx:id="button_close_event" layoutX="270.0" layoutY="6.0" mnemonicParsing="false" style="-fx-background-color: transparent;" text="X" textFill="#5e5e5e">
                <font>
                   <Font name="Arial Bold" size="12.0" />
@@ -220,6 +212,22 @@
                   <Image url="@donation-icon.png" />
                </image>
             </ImageView>
+            <Button fx:id="button_event_register" layoutX="217.0" layoutY="269.0" mnemonicParsing="false" style="-fx-background-color: #ec1c2c;" text="Register" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="button_cancel_event" layoutX="26.0" layoutY="269.0" mnemonicParsing="false" style="-fx-background-color: #ec1c2c;" text="Cancel Event" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
          </children>
          <effect>
             <DropShadow blurType="GAUSSIAN" height="36.03" radius="17.4225" width="35.66" />

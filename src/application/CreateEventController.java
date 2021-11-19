@@ -18,6 +18,7 @@ public class CreateEventController implements Initializable{
 	@FXML private Button button_create_event;
 	@FXML private Button button_view_events;
 	@FXML private Button button_donate;
+	@FXML private Button button_reporting;
 	@FXML private Button button_profile;
 	@FXML private Button button_submit_event;
 	
@@ -114,6 +115,14 @@ public class CreateEventController implements Initializable{
 			}
 		}));
 
+		// Assigned the action that is caused by the "Reporting" button being clicked.
+		button_reporting.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				DBUtils.changeScene(event, "Reporting.fxml", "Reporting", email, firstName, lastName, accountType);
+			}
+		}));
+
 		// Assigned the action that is caused by the "Submit Event" button being clicked.
 		button_submit_event.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -158,7 +167,6 @@ public class CreateEventController implements Initializable{
 				String date = dp_select_date.getValue().toString();
 				String location = tf_location.getText();
 
-				System.out.println(startTime + " " + endTime);
 				DBUtils.createEvent(event, eventName, date, location, (int) spinner_spots.getValue(), startTime, endTime, email, firstName, lastName, accountType);
 				System.out.println("You've created an event! :)");
 			}

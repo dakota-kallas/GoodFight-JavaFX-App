@@ -113,6 +113,14 @@ public class DonatePageController implements Initializable{
 			}
 		}));
 
+		// Assigned the action that is caused by the "Reporting" button being clicked.
+		button_reporting.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				DBUtils.changeScene(event, "Reporting.fxml", "Reporting", email, firstName, lastName, accountType);
+			}
+		}));
+
 		// Assigned the action that is caused by the "Submit Donation" button being clicked.
 		button_submit_donation.setOnAction((new EventHandler<ActionEvent>() {
 			@Override

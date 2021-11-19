@@ -101,6 +101,14 @@ public class ViewProfileController implements Initializable{
 			}
 		}));
 
+		// Assigned the action that is caused by the "Reporting" button being clicked.
+		button_reporting.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				DBUtils.changeScene(event, "Reporting.fxml", "Reporting", email, firstName, lastName, accountType);
+			}
+		}));
+
 		// Update the user information
 		button_save.setOnAction((new EventHandler<ActionEvent>() {
 			@Override

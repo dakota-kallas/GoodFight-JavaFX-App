@@ -1,5 +1,99 @@
+// Style of entire tableView
+.table-view{
+    -fx-background-color: #ECECEC;
+ }
 
-.text-area {
+// Style the column header without values
+ .table-view .column-header-background .filler {
+     -fx-background-color:  linear-gradient(to bottom, #BF1421, #ec1c2c);
+ }
+
+// Style of each column header in the tableView
+.table-view .column-header {
+     -fx-background-color:  linear-gradient(to bottom, #BF1421, #ec1c2c);
+}
+
+// Style of each column headers label  in the tableView
+.table-view .column-header-background .label{
+    -fx-background-color: transparent;
     -fx-font-family: "Arial Rounded MT Bold";
-    -fx-font-size: 18px;
+    -fx-text-fill: white;
+}
+
+.table-view .corner {
+    -fx-background-color: transparent;
+}
+
+// Style of each table cell
+.table-view .table-cell{
+    -fx-border-color: transparent;
+    -fx-padding: 2 0 2 10px;
+    -fx-font-size: 12px;
+}
+
+.table-row-cell: hover {
+    -fx-text-background-color: #BF1421;
+}
+.table-row-cell: selected {
+    -fx-text-background-color: #ec1c2c;
+    -fx-font-family: "Arial Rounded MT Bold";
+}
+.table-row-cell: odd{
+    -fx-background-color: #ECECEC;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+.table-row-cell: even{
+    -fx-background-color: #D5D5D5;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+// Style the scroll bar
+.table-view .virtual-flow .scroll-bar:vertical,
+.table-view .virtual-flow .scroll-bar:vertical .track,
+.table-view .virtual-flow .scroll-bar:vertical .track-background,
+.table-view .virtual-flow .scroll-bar:horizontal,
+.table-view .virtual-flow .scroll-bar:horizontal .track,
+.table-view .virtual-flow .scroll-bar:horizontal .track-background {
+    -fx-background-color: transparent;
+}
+.table-view .virtual-flow .scroll-bar .increment-button,
+.table-view .virtual-flow .scroll-bar .decrement-button {
+    -fx-opacity: 0;
+    -fx-padding: 2;
+}
+.table-view .virtual-flow .scroll-bar:vertical .thumb{
+    -fx-background-color:  linear-gradient(to bottom, #BF1421, #ec1c2c);
+}
+.table-view .virtual-flow .scroll-bar:horizontal .thumb {
+    -fx-background-color:  linear-gradient(to right, #BF1421, #ec1c2c);
+}
+
+// Style the choice boxes
+.choice-box {
+  -fx-background-color: #373737;
+  -fx-mark-color: #ec1c2c; // arrow color
+}
+// Selected item text color on the control itself
+.choice-box > .label {
+    -fx-text-fill: white;
+    -fx-font-family: "Arial Rounded MT Bold";
+}
+// Background color of the whole context menu
+.choice-box .context-menu {
+    -fx-background-color: #373737;
+}
+// Focused item background color in the list
+.choice-box .menu-item:focused {
+    -fx-background-color: #696969;
+}
+// Text color of non-focused items in the list
+.choice-box .menu-item > .label {
+    -fx-text-fill: white;
+    -fx-font-family: "Arial Rounded MT";
+}
+// Text color of focused item in the list
+.choice-box .menu-item:focused > .label {
+    -fx-font-family: "Arial Rounded MT Bold";
 }

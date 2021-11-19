@@ -36,6 +36,7 @@ public class ViewEventsController implements Initializable{
 	@FXML private Label label_event_donations;
 	@FXML private Button button_close_event;
 	@FXML private Button button_event_register;
+	@FXML private Button button_cancel_event;
 
 	@FXML private ListView listview_events;
 
@@ -162,6 +163,14 @@ public class ViewEventsController implements Initializable{
 			}
 		}));
 
+		// Assigned the action that is caused by the "Reporting" button being clicked.
+		button_reporting.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				DBUtils.changeScene(event, "Reporting.fxml", "Reporting", email, firstName, lastName, accountType);
+			}
+		}));
+
 		// Assigned the action that is caused by the "View More" button being clicked.
 		button_view_more.setOnAction((new EventHandler<ActionEvent>() {
 			@Override
@@ -251,7 +260,25 @@ public class ViewEventsController implements Initializable{
 					// Make the popup visible
 					pane_event_view.setVisible(true);
 					pane_event_view.setManaged(true);
+					if(!accountType.equals("Admin")) {
+						button_cancel_event.setVisible(false);
+						button_cancel_event.setManaged(false);
+					}
+					else {
+						button_cancel_event.setVisible(true);
+						button_cancel_event.setManaged(true);
+					}
 				}
+			}
+		}));
+
+		// Assigned the action that is caused by the "Donate" button being clicked by an admin.
+		button_cancel_event.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				int eventId = Integer.valueOf(label_event_id.getText().substring(1, 5));
+				DBUtils.cancelEvent(event, eventId);
+				DBUtils.changeScene(event, "ViewEvents.fxml", "View Events", email, firstName, lastName, accountType);
 			}
 		}));
 

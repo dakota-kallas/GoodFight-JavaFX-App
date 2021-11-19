@@ -66,6 +66,9 @@ public class DBUtils {
 				} else if (fxmlFile.equals("DonatePage.fxml")){
 					DonatePageController donateController = loader.getController();
 					donateController.setUserInformation(firstName, lastName, email, accountType);
+				} else if (fxmlFile.equals("Reporting.fxml")){
+					ReportingController reportingController = loader.getController();
+					reportingController.setUserInformation(firstName, lastName, email, accountType);
 				} else {
 					System.out.println("[ERROR] Page not loaded.");
 				}
@@ -85,6 +88,7 @@ public class DBUtils {
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.setTitle(title);
 		Scene scene = new Scene(root, 800, 600);
+		scene.getStylesheets().add("application/application.css");
 		stage.setScene(scene);
 		stage.show();
 	}
@@ -428,6 +432,77 @@ public class DBUtils {
 			}
 		}
 	}
+	/**
+	 * Method used to cancel an event.
+	 *
+	 * @param event:       		The event that causes the method to run
+	 * @param eventId:   		The unique id of the event
+	 */
+	public static void cancelEvent(ActionEvent event, int eventId) {
+		// Set up variables to connect and query the database.
+		Connection connection = null;
+		PreparedStatement psCancelAttended = null;
+		PreparedStatement psCancelDonatedTo = null;
+		PreparedStatement psCancelEvent = null;
+		try {
+			// Connect to the database.
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
+
+			// Cancel all attendance from the event
+			psCancelAttended = connection.prepareStatement("DELETE FROM attended WHERE EventId = ?");
+			psCancelAttended.setInt(1, eventId);
+			psCancelAttended.executeUpdate();
+
+			// Convert all restricted donations from the event to unrestricted donations
+			psCancelDonatedTo = connection.prepareStatement("DELETE FROM donated_to WHERE EventId = ?");
+			psCancelDonatedTo.setInt(1, eventId);
+			psCancelDonatedTo.executeUpdate();
+
+			// Cancel the event
+			psCancelEvent = connection.prepareStatement("DELETE FROM event WHERE EventId = ?");
+			psCancelEvent.setInt(1, eventId);
+			psCancelEvent.executeUpdate();
+
+			// Confirm to the user that the event has been cancelled.
+			System.out.println("Event successfully cancelled.");
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+			alert.setContentText("The event has been successfully cancelled.");
+			alert.show();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// Close all statements that have been used to query and connect to the database.
+			if (psCancelAttended != null) {
+				try {
+					psCancelAttended.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (psCancelDonatedTo != null) {
+				try {
+					psCancelDonatedTo.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (psCancelEvent != null) {
+				try {
+					psCancelEvent.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+
+				}
+			}
+		}
+	}
 
 	/**
 	 * Method used to register for an event.
@@ -483,8 +558,10 @@ public class DBUtils {
 			// Check if the user is already registered for an event at the same time as this event
 			Date startDate = resultSet.getDate("DtStart");
 			Time startTime = resultSet.getTime("DtStart");
+			int numStartTime = Integer.valueOf(startTime.toString().substring(0,2));
 			Date endDate = resultSet.getDate("DtEnd");
 			Time endTime = resultSet.getTime("DtEnd");
+			int numEndTime = Integer.valueOf(endTime.toString().substring(0,2));
 			psCheckUserRegistered = connection.prepareStatement("SELECT EventId, DtStart, DtEnd FROM attended NATURAL JOIN event WHERE Email = ?");
 			psCheckUserRegistered.setString(1, email);
 			resultSet = psCheckUserRegistered.executeQuery();
@@ -496,7 +573,7 @@ public class DBUtils {
 					int curEndTime = Integer.valueOf(resultSet.getTime("DtEnd").toString().substring(0,2));
 
 					// Check if the event starts while another event the user is attending is going on
-					if(curStartTime < Integer.valueOf(endTime.toString().substring(0,2)) && curStartTime > Integer.valueOf(startTime.toString().substring(0,2))) {
+					if(curStartTime < numEndTime && curStartTime > numStartTime) {
 						System.out.println("This event is is at the same time as another the user is registered for.");
 						Alert alert = new Alert(Alert.AlertType.ERROR);
 						alert.setContentText("This event conflicts with another event you are registered for.");
@@ -504,7 +581,7 @@ public class DBUtils {
 						return;
 					}
 					// Check if the event ends while another event the user is attending is going on
-					else if (curEndTime < Integer.valueOf(endTime.toString().substring(0,2)) && curEndTime > Integer.valueOf(startTime.toString().substring(0,2))) {
+					else if (curEndTime < numEndTime && curEndTime > numStartTime) {
 						System.out.println("This event is is at the same time as another the user is registered for.");
 						Alert alert = new Alert(Alert.AlertType.ERROR);
 						alert.setContentText("This event conflicts with another event you are registered for.");
@@ -512,7 +589,7 @@ public class DBUtils {
 						return;
 					}
 					// Check if they start or end at the same time
-					else if (curEndTime == Integer.valueOf(endTime.toString().substring(0,2)) || curStartTime == Integer.valueOf(startTime.toString().substring(0,2))) {
+					else if (curEndTime == numEndTime || curStartTime == numStartTime) {
 						System.out.println("This event is is at the same time as another the user is registered for.");
 						Alert alert = new Alert(Alert.AlertType.ERROR);
 						alert.setContentText("This event conflicts with another event you are registered for.");
@@ -522,11 +599,12 @@ public class DBUtils {
 				}
 			}
 
+			int hoursAttended = numEndTime - numStartTime;
 			// If no errors occur, insert the user and the event they wish to attend into the 'attended' table.
-			psInsert = connection.prepareStatement("INSERT INTO attended (EventId, Email, TimeAttended) VALUES (?, ?, ?)");
+			psInsert = connection.prepareStatement("INSERT INTO attended (EventId, Email, HoursAttended) VALUES (?, ?, ?)");
 			psInsert.setInt(1, eventId);
 			psInsert.setString(2, email);
-			psInsert.setString(3, date + " 08:00:00");
+			psInsert.setInt(3, hoursAttended);
 			psInsert.executeUpdate();
 
 			// Update the amount of available spots for the event.
