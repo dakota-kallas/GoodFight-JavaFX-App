@@ -139,7 +139,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <TableView fx:id="tableview_results" layoutX="45.0" layoutY="97.0" prefHeight="387.0" prefWidth="526.0">
+            <TableView fx:id="tableview_results" layoutX="45.0" layoutY="97.0" prefHeight="338.0" prefWidth="526.0">
               <columns>
                 <TableColumn prefWidth="75.0" text="C1" />
                 <TableColumn prefWidth="75.0" text="C2" />
@@ -147,5 +147,13 @@
             </TableView>
          </children>
       </Pane>
+      <Button fx:id="button_delete_selected" layoutX="143.0" layoutY="500.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="657.0" style="-fx-background-color: #ec1c2c;" text="Delete Selected" textFill="WHITE">
+         <font>
+            <Font name="Arial Rounded MT Bold" size="14.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
    </children>
 </AnchorPane>
