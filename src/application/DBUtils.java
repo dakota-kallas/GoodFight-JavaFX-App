@@ -27,6 +27,7 @@ import javafx.scene.Scene;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import jdk.jfr.Description;
 
 public class DBUtils {
 	
@@ -223,7 +224,7 @@ public class DBUtils {
 	 * @param firstName:   		The user's first name
 	 * @param accountType: 		The account type of the user
 	 */
-	public static void createEvent(ActionEvent event, String eventName, String date, String location, int spotsAvailable, int startTime, int endTime, String email, String firstName, String lastName, String accountType) {
+	public static void createEvent(ActionEvent event, String eventName, String description, String date, String location, int spotsAvailable, int startTime, int endTime, String email, String firstName, String lastName, String accountType) {
 		// Set up variables to connect and query the database.
 		Connection connection = null;
 		PreparedStatement psInsert = null;
@@ -232,7 +233,12 @@ public class DBUtils {
 			// Connect to the database
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
 			// Create a query to insert an event into the database and execute it.
-			psInsert = connection.prepareStatement("INSERT INTO event (SpotsAvailable, DtStart, DtEnd, Name, Location) VALUES (?, ?, ?, ?, ?)");
+			if(description == null) {
+				psInsert = connection.prepareStatement("INSERT INTO event (SpotsAvailable, DtStart, DtEnd, Name, Location) VALUES (?, ?, ?, ?, ?)");
+			} else {
+				psInsert = connection.prepareStatement("INSERT INTO event (SpotsAvailable, DtStart, DtEnd, Name, Location, Description) VALUES (?, ?, ?, ?, ?, ?)");
+				psInsert.setString(6, description);
+			}
 			psInsert.setString(1, spotsAvailable + "");
 			psInsert.setString(2, date + " " + startTime + ":00:00");
 			psInsert.setString(3, date + " " + endTime + ":00:00");
@@ -267,6 +273,17 @@ public class DBUtils {
 		}
 	}
 
+	/**
+	 * Method used to process a restricted donation.
+	 *
+	 * @param event:       		The event that causes the method to run
+	 * @param eventId:			The event that the user wishes to donate to
+	 * @param amount:   		The amount the user is donating
+	 * @param email:       		The unique email of the user
+	 * @param firstName:   		The user's first name
+	 * @param lastName:   		The user's last name
+	 * @param accountType: 		The account type of the user
+	 */
 	public static void processRestrictedDonation(ActionEvent event, int eventId, int amount, String email, String firstName, String lastName, String accountType) {
 		// Set up variables to connect and query the database.
 		Connection connection = null;
@@ -432,6 +449,7 @@ public class DBUtils {
 			}
 		}
 	}
+
 	/**
 	 * Method used to cancel an event.
 	 *
@@ -743,7 +761,7 @@ public class DBUtils {
 		try {
 			// Connect to the database and run the query to gather the user information from the database
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
-			preparedStatement = connection.prepareStatement("SELECT Password, Type, FirstName, LastName, Salt FROM user WHERE Email = ?");
+			preparedStatement = connection.prepareStatement("SELECT Password, Type, Active, FirstName, LastName, Salt FROM user WHERE Email = ?");
 			preparedStatement.setString(1, email);
 			resultSet = preparedStatement.executeQuery();
 
@@ -761,6 +779,15 @@ public class DBUtils {
 					String retrievedFirstName = resultSet.getString("FirstName");
 					String retrievedLastName = resultSet.getString("LastName");
 					String retrievedSalt = resultSet.getString("Salt");
+					int retrievedActive = resultSet.getInt("Active");
+					if(retrievedActive == 0) {
+						// If the user is set to inactive, warn user.
+						System.out.println("User is inactive.");
+						Alert alert = new Alert(Alert.AlertType.ERROR);
+						alert.setContentText("This account has been set to inactive. Please contact an administrator.");
+						alert.show();
+						return;
+					}
 
 					//create key factory
 					SecretKeyFactory pbkdf2KeyFactory = null;
@@ -861,6 +888,51 @@ public class DBUtils {
 			// Confirm to the user that they have cancelled their registration
 			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 			alert.setContentText("User information updated.");
+			alert.show();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// Close all statements that have been used to query and connect to the database.
+			if (psUpdate != null) {
+				try {
+					psUpdate.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+
+				}
+			}
+		}
+	}
+
+	/**
+	 * Method set a user's active status to inactive.
+	 *
+	 * @param event: the event that caused the method to run.
+	 * @param email: the email entered by the user.
+	 */
+	public static void setUserInactive(ActionEvent event, String email) {
+		// Set up variables to connect and query the database.
+		Connection connection = null;
+		PreparedStatement psUpdate = null;
+
+		try {
+			// Update the user information in the database
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
+			psUpdate = connection.prepareStatement("UPDATE user SET Active = 0 WHERE Email = ?");
+			psUpdate.setString(1, email);
+			psUpdate.executeUpdate();
+
+			// Confirm to the user that they have cancelled their registration
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+			alert.setContentText("User has been set to inactive.");
 			alert.show();
 
 		} catch (SQLException e) {

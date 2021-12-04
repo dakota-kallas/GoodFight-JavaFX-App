@@ -33,6 +33,7 @@ public class ReportingController implements Initializable{
 	@FXML private ChoiceBox cb_reporting_type;
 	@FXML private ChoiceBox cb_user_attributes;
 	@FXML private TextField tf_search;
+	@FXML private Button button_delete_selected;
 	
 	@FXML private Label label_name;
 	@FXML private Label label_account_type;
@@ -56,7 +57,7 @@ public class ReportingController implements Initializable{
 		cb_reporting_type.setItems(FXCollections.observableArrayList("User", "Event"));
 		cb_reporting_type.setValue("User"); // set the default value
 		cb_reporting_type.setTooltip(new Tooltip("Select report type"));
-		cb_user_attributes.setItems(FXCollections.observableArrayList("FirstName", "LastName", "Email", "Type"));
+		cb_user_attributes.setItems(FXCollections.observableArrayList("FirstName", "LastName", "Email", "Type", "Active"));
 		cb_user_attributes.setTooltip(new Tooltip("Select the search attribute"));
 
 		TableColumn<User, String> firstNameCol = new TableColumn<>("First Name");
@@ -67,6 +68,8 @@ public class ReportingController implements Initializable{
 		emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
 		TableColumn<User, String> aTypeCol = new TableColumn<>("Type");
 		aTypeCol.setCellValueFactory(new PropertyValueFactory<>("accType"));
+		TableColumn<User, String> activeCol = new TableColumn<>("Active");
+		activeCol.setCellValueFactory(new PropertyValueFactory<>("accActive"));
 		TableColumn<User, String> totalDonationsCol = new TableColumn<>("Donations");
 		totalDonationsCol.setMinWidth(80);
 		totalDonationsCol.setCellValueFactory(new PropertyValueFactory<>("donations"));
@@ -74,7 +77,7 @@ public class ReportingController implements Initializable{
 		totalHoursCol.setMinWidth(120);
 		totalHoursCol.setCellValueFactory(new PropertyValueFactory<>("hours"));
 
-		tableview_results.getColumns().addAll(firstNameCol, lastNameCol, emailCol, aTypeCol, totalDonationsCol, totalHoursCol);
+		tableview_results.getColumns().addAll(firstNameCol, lastNameCol, emailCol, aTypeCol, activeCol, totalDonationsCol, totalHoursCol);
 
 		// Assigned the action that is caused by the "Logout" button being clicked.
 		button_logout.setOnAction(new EventHandler<ActionEvent>() {
@@ -132,6 +135,30 @@ public class ReportingController implements Initializable{
 			}
 		}));
 
+		// Assigned the action that is caused by the "Delete Selected" button being clicked.
+		button_delete_selected.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(tableview_results.getSelectionModel().isEmpty()) {
+					System.out.println("No item selected.");
+					Alert alert = new Alert(Alert.AlertType.ERROR);
+					alert.setContentText("Please select an item to delete.");
+					alert.show();
+					return;
+				}
+				String table = cb_reporting_type.getValue().toString().toLowerCase();
+				if(table.equals("user")) {
+					User currentUser =  (User) tableview_results.getSelectionModel().getSelectedItem();
+					DBUtils.setUserInactive(event, currentUser.getEmail());
+				} else if(table.equals("event")) {
+					Event currentEvent =  (Event) tableview_results.getSelectionModel().getSelectedItem();
+					int eventId = Integer.valueOf(currentEvent.getEventId());
+					DBUtils.cancelEvent(event, eventId);
+				}
+				DBUtils.changeScene(event, "Reporting.fxml", "Reporting", email, firstName, lastName, accountType);
+			}
+		}));
+
 		cb_reporting_type.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number value, Number new_value) {
@@ -148,6 +175,8 @@ public class ReportingController implements Initializable{
 					emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
 					TableColumn<User, String> aTypeCol = new TableColumn<>("Type");
 					aTypeCol.setCellValueFactory(new PropertyValueFactory<>("accType"));
+					TableColumn<User, String> activeCol = new TableColumn<>("Active");
+					activeCol.setCellValueFactory(new PropertyValueFactory<>("accActive"));
 					TableColumn<User, String> totalDonationsCol = new TableColumn<>("Donations");
 					totalDonationsCol.setMinWidth(80);
 					totalDonationsCol.setCellValueFactory(new PropertyValueFactory<>("donations"));
@@ -155,8 +184,8 @@ public class ReportingController implements Initializable{
 					totalHoursCol.setMinWidth(120);
 					totalHoursCol.setCellValueFactory(new PropertyValueFactory<>("hours"));
 
-					tableview_results.getColumns().addAll(firstNameCol, lastNameCol, emailCol, aTypeCol, totalDonationsCol, totalHoursCol);
-					cb_user_attributes.setItems(FXCollections.observableArrayList("FirstName", "LastName", "Email", "Type"));
+					tableview_results.getColumns().addAll(firstNameCol, lastNameCol, emailCol, aTypeCol, activeCol, totalDonationsCol, totalHoursCol);
+					cb_user_attributes.setItems(FXCollections.observableArrayList("FirstName", "LastName", "Email", "Type", "Active"));
 				} else if(table.equals("event")) {
 					TableColumn<User, String> eventIdCol = new TableColumn<>("Event ID");
 					eventIdCol.setCellValueFactory(new PropertyValueFactory<>("eventId"));
@@ -171,9 +200,11 @@ public class ReportingController implements Initializable{
 					dtEndCol.setCellValueFactory(new PropertyValueFactory<>("dtEnd"));
 					TableColumn<User, String> locationCol = new TableColumn<>("Location");
 					locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
+					TableColumn<User, String> descriptionCol = new TableColumn<>("Description");
+					descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
 
-					tableview_results.getColumns().addAll(eventIdCol, nameCol, spotsAvailableCol, dtStartCol, dtEndCol, locationCol);
-					cb_user_attributes.setItems(FXCollections.observableArrayList("EventId", "SpotsAvailable", "DtStart", "DtEnd", "Name", "Location"));
+					tableview_results.getColumns().addAll(eventIdCol, nameCol, spotsAvailableCol, dtStartCol, dtEndCol, locationCol, descriptionCol);
+					cb_user_attributes.setItems(FXCollections.observableArrayList("EventId", "SpotsAvailable", "DtStart", "DtEnd", "Name", "Location", "Description"));
 				}
 			}
 		});
@@ -218,16 +249,32 @@ public class ReportingController implements Initializable{
 					connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
 					if(table.equals("user")) {
 						if(attribute.equals("") || searchValue.equals("")) {
-							psQuery = connection.prepareStatement("SELECT FirstName, LastName, Email, Type, TotalHours, TotalDonations FROM user NATURAL LEFT JOIN (SELECT Email, sum(HoursAttended) AS TotalHours FROM attended GROUP BY Email) AS HoursQuery NATURAL LEFT JOIN (SELECT Email, sum(Amount) AS TotalDonations FROM user NATURAL LEFT JOIN donated_by NATURAL LEFT JOIN donation GROUP BY Email) AS DonationQuery GROUP BY Email");
+							psQuery = connection.prepareStatement("SELECT FirstName, LastName, Email, Type, Active, TotalHours, TotalDonations FROM user NATURAL LEFT JOIN (SELECT Email, sum(HoursAttended) AS TotalHours FROM attended GROUP BY Email) AS HoursQuery NATURAL LEFT JOIN (SELECT Email, sum(Amount) AS TotalDonations FROM user NATURAL LEFT JOIN donated_by NATURAL LEFT JOIN donation GROUP BY Email) AS DonationQuery GROUP BY Email");
 						} else {
-							psQuery = connection.prepareStatement("SELECT FirstName, LastName, Email, Type, TotalHours, TotalDonations FROM user NATURAL LEFT JOIN (SELECT Email, sum(HoursAttended) AS TotalHours FROM attended GROUP BY Email) AS HoursQuery NATURAL LEFT JOIN (SELECT Email, sum(Amount) AS TotalDonations FROM user NATURAL LEFT JOIN donated_by NATURAL LEFT JOIN donation GROUP BY Email) AS DonationQuery WHERE " + attribute + " LIKE ? GROUP BY Email");
-							psQuery.setString(1, "%" + searchValue + "%");
+							if(attribute.equals("Active")) {
+								psQuery = connection.prepareStatement("SELECT FirstName, LastName, Email, Type, Active,  TotalHours, TotalDonations FROM user NATURAL LEFT JOIN (SELECT Email, sum(HoursAttended) AS TotalHours FROM attended GROUP BY Email) AS HoursQuery NATURAL LEFT JOIN (SELECT Email, sum(Amount) AS TotalDonations FROM user NATURAL LEFT JOIN donated_by NATURAL LEFT JOIN donation GROUP BY Email) AS DonationQuery WHERE " + attribute + " = ? GROUP BY Email");
+								if(searchValue.equals("1") || searchValue.toLowerCase().equals("true")) {
+									psQuery.setInt(1, 1);
+								} else if(searchValue.equals("0") || searchValue.toLowerCase().equals("false")) {
+									psQuery.setInt(1, 0);
+								} else {
+									System.out.println("Invalid search value.");
+									Alert alert = new Alert(Alert.AlertType.ERROR);
+									alert.setContentText("Please enter a valid search.");
+									alert.show();
+									return;
+								}
+							}
+							else {
+								psQuery = connection.prepareStatement("SELECT FirstName, LastName, Email, Type, Active,  TotalHours, TotalDonations FROM user NATURAL LEFT JOIN (SELECT Email, sum(HoursAttended) AS TotalHours FROM attended GROUP BY Email) AS HoursQuery NATURAL LEFT JOIN (SELECT Email, sum(Amount) AS TotalDonations FROM user NATURAL LEFT JOIN donated_by NATURAL LEFT JOIN donation GROUP BY Email) AS DonationQuery WHERE " + attribute + " LIKE ? GROUP BY Email");
+								psQuery.setString(1, "%" + searchValue + "%");
+							}
 						}
 					} else if(table.equals("event")) {
 						if(attribute.equals("") || searchValue.equals("")) {
-							psQuery = connection.prepareStatement("SELECT EventId, SpotsAvailable, DtStart, DtEnd, Name, Location FROM " + table);
+							psQuery = connection.prepareStatement("SELECT EventId, SpotsAvailable, DtStart, DtEnd, Name, Location, Description FROM " + table);
 						} else {
-							psQuery = connection.prepareStatement("SELECT EventId, SpotsAvailable, DtStart, DtEnd, Name, Location FROM " + table + " WHERE " + attribute + " LIKE ?");
+							psQuery = connection.prepareStatement("SELECT EventId, SpotsAvailable, DtStart, DtEnd, Name, Location, Description FROM " + table + " WHERE " + attribute + " LIKE ?");
 							if(attribute.equals("EventId") || attribute.equals("SpotsAvailable")) {
 								try {
 									psQuery.setInt(1, Integer.valueOf(searchValue));
@@ -242,7 +289,6 @@ public class ReportingController implements Initializable{
 							psQuery.setString(1, "%" + searchValue + "%");
 						}
 					}
-					System.out.println(psQuery.toString());
 					resultSet = psQuery.executeQuery();
 
 					while(resultSet.next()) {
@@ -251,10 +297,16 @@ public class ReportingController implements Initializable{
 							String curLastName = resultSet.getString("LastName");
 							String curEmail = resultSet.getString("Email");
 							String curType = resultSet.getString("Type");
+							String curActive = "" + resultSet.getInt("Active");
+							if(curActive.equals("1")) {
+								curActive = "True";
+							} else {
+								curActive = "False";
+							}
 							String curDonations = "$" + resultSet.getInt("TotalDonations");
 							String curHours = "" + resultSet.getInt("TotalHours");
 
-							tableview_results.getItems().add(new User(curFirstName, curLastName, curEmail, curType, curDonations, curHours));
+							tableview_results.getItems().add(new User(curFirstName, curLastName, curEmail, curType, curActive, curDonations, curHours));
 						} else if(table.equals("event")) {
 							String curEventId = resultSet.getInt("EventId") + "";
 							String curSpots = resultSet.getInt("SpotsAvailable") + "";
@@ -262,8 +314,12 @@ public class ReportingController implements Initializable{
 							String curEnd = resultSet.getDate("DtEnd").toString();
 							String curName = resultSet.getString("Name");
 							String curLocation = resultSet.getString("Location");
+							String curDesc = resultSet.getString("Description");
+							if(curDesc == null) {
+								curDesc = "";
+							}
 
-							tableview_results.getItems().add(new Event(curEventId, curSpots, curStart, curEnd, curName, curLocation));
+							tableview_results.getItems().add(new Event(curEventId, curSpots, curStart, curEnd, curName, curLocation, curDesc));
 						}
 					}
 				} catch (SQLException e) {
@@ -290,14 +346,16 @@ public class ReportingController implements Initializable{
 		private final SimpleStringProperty lastName;
 		private final SimpleStringProperty email;
 		private final SimpleStringProperty accType;
+		private final SimpleStringProperty accActive;
 		private final SimpleStringProperty donations;
 		private final SimpleStringProperty hours;
 
-		private User(String fName, String lName, String email, String aType, String amount, String totalHours) {
+		private User(String fName, String lName, String email, String aType, String aActive, String amount, String totalHours) {
 			this.firstName = new SimpleStringProperty(fName);
 			this.lastName = new SimpleStringProperty(lName);
 			this.email = new SimpleStringProperty(email);
 			this.accType = new SimpleStringProperty(aType);
+			this.accActive = new SimpleStringProperty(aActive);
 			this.donations = new SimpleStringProperty(amount);
 			this.hours = new SimpleStringProperty(totalHours);
 		}
@@ -325,12 +383,21 @@ public class ReportingController implements Initializable{
 		public void setEmail(String fName) {
 			email.set(fName);
 		}
+
 		public String getAccType() {
 			return accType.get();
 		}
 
 		public void setAccType(String aType) {
 			accType.set(aType);
+		}
+
+		public String getAccActive() {
+			return accActive.get();
+		}
+
+		public void setAccActive(String active) {
+			accActive.set(active);
 		}
 
 		public String getDonations() {
@@ -358,14 +425,16 @@ public class ReportingController implements Initializable{
 		private final SimpleStringProperty dtEnd;
 		private final SimpleStringProperty name;
 		private final SimpleStringProperty location;
+		private final SimpleStringProperty description;
 
-		private Event(String eId, String spots, String start, String end, String n, String loc) {
+		private Event(String eId, String spots, String start, String end, String n, String loc, String desc) {
 			this.eventId = new SimpleStringProperty(eId);
 			this.spotsAvailable = new SimpleStringProperty(spots);
 			this.dtStart = new SimpleStringProperty(start);
 			this.dtEnd = new SimpleStringProperty(end);
 			this.name = new SimpleStringProperty(n);
 			this.location = new SimpleStringProperty(loc);
+			this.description = new SimpleStringProperty(desc);
 		}
 
 		public String getEventId() {
@@ -411,6 +480,14 @@ public class ReportingController implements Initializable{
 
 		public void setLocation(String loc) {
 			location.set(loc);
+		}
+
+		public String getDescription() {
+			return description.get();
+		}
+
+		public void setDescription(String desc) {
+			description.set(desc);
 		}
 	}
 }
