@@ -9,6 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class CreateEventController implements Initializable{
@@ -27,6 +28,7 @@ public class CreateEventController implements Initializable{
 
 	@FXML private TextField tf_event_name;
 	@FXML private TextField tf_location;
+	@FXML private TextArea ta_description;
 
 	@FXML private DatePicker dp_select_date;
 
@@ -54,6 +56,15 @@ public class CreateEventController implements Initializable{
 		this.spinner_start_time.setValueFactory(configureValues);
 		configureValues = new SpinnerValueFactory.IntegerSpinnerValueFactory(0,12,5);
 		this.spinner_end_time.setValueFactory(configureValues);
+
+		// Configure the DatePicker
+		dp_select_date.setDayCellFactory(picker -> new DateCell() {
+			public void updateItem(LocalDate date, boolean empty) {
+				super.updateItem(date, empty);
+				LocalDate today = LocalDate.now();
+				setDisable(empty || date.compareTo(today) < 0 );
+			}
+		});
 
 		// Configure the lists used in the spinner selectors
 		ObservableList<String> end_ampm = FXCollections.observableArrayList("AM", "PM");
@@ -166,8 +177,12 @@ public class CreateEventController implements Initializable{
 
 				String date = dp_select_date.getValue().toString();
 				String location = tf_location.getText();
+				if(ta_description.getText().trim().isEmpty()) {
+					DBUtils.createEvent(event, eventName, null, date, location, (int) spinner_spots.getValue(), startTime, endTime, email, firstName, lastName, accountType);
+				} else {
+					DBUtils.createEvent(event, eventName, ta_description.getText(), date, location, (int) spinner_spots.getValue(), startTime, endTime, email, firstName, lastName, accountType);
+				}
 
-				DBUtils.createEvent(event, eventName, date, location, (int) spinner_spots.getValue(), startTime, endTime, email, firstName, lastName, accountType);
 				System.out.println("You've created an event! :)");
 			}
 		});

@@ -34,6 +34,8 @@ public class ReportingController implements Initializable{
 	@FXML private ChoiceBox cb_user_attributes;
 	@FXML private TextField tf_search;
 	@FXML private Button button_delete_selected;
+	@FXML private Button button_set_inactive;
+	@FXML private Button button_set_active;
 	
 	@FXML private Label label_name;
 	@FXML private Label label_account_type;
@@ -78,6 +80,8 @@ public class ReportingController implements Initializable{
 		totalHoursCol.setCellValueFactory(new PropertyValueFactory<>("hours"));
 
 		tableview_results.getColumns().addAll(firstNameCol, lastNameCol, emailCol, aTypeCol, activeCol, totalDonationsCol, totalHoursCol);
+		button_delete_selected.setVisible(false);
+		button_delete_selected.setManaged(false);
 
 		// Assigned the action that is caused by the "Logout" button being clicked.
 		button_logout.setOnAction(new EventHandler<ActionEvent>() {
@@ -142,23 +146,54 @@ public class ReportingController implements Initializable{
 				if(tableview_results.getSelectionModel().isEmpty()) {
 					System.out.println("No item selected.");
 					Alert alert = new Alert(Alert.AlertType.ERROR);
-					alert.setContentText("Please select an item to delete.");
+					alert.setContentText("Please select an event to delete.");
 					alert.show();
 					return;
 				}
-				String table = cb_reporting_type.getValue().toString().toLowerCase();
-				if(table.equals("user")) {
-					User currentUser =  (User) tableview_results.getSelectionModel().getSelectedItem();
-					DBUtils.setUserInactive(event, currentUser.getEmail());
-				} else if(table.equals("event")) {
-					Event currentEvent =  (Event) tableview_results.getSelectionModel().getSelectedItem();
-					int eventId = Integer.valueOf(currentEvent.getEventId());
-					DBUtils.cancelEvent(event, eventId);
-				}
+				Event currentEvent =  (Event) tableview_results.getSelectionModel().getSelectedItem();
+				int eventId = Integer.valueOf(currentEvent.getEventId());
+				DBUtils.cancelEvent(event, eventId);
 				DBUtils.changeScene(event, "Reporting.fxml", "Reporting", email, firstName, lastName, accountType);
 			}
 		}));
 
+		// Assigned the action that is caused by the "Set Inactive" button being clicked.
+		button_set_inactive.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(tableview_results.getSelectionModel().isEmpty()) {
+					System.out.println("No item selected.");
+					Alert alert = new Alert(Alert.AlertType.ERROR);
+					alert.setContentText("Please select an user to update.");
+					alert.show();
+					return;
+				}
+
+				User currentUser =  (User) tableview_results.getSelectionModel().getSelectedItem();
+				DBUtils.setUserActiveStatus(event, currentUser.getEmail(), 0);
+				DBUtils.changeScene(event, "Reporting.fxml", "Reporting", email, firstName, lastName, accountType);
+			}
+		}));
+
+		// Assigned the action that is caused by the "Set Active" button being clicked.
+		button_set_active.setOnAction((new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(tableview_results.getSelectionModel().isEmpty()) {
+					System.out.println("No item selected.");
+					Alert alert = new Alert(Alert.AlertType.ERROR);
+					alert.setContentText("Please select a user to update.");
+					alert.show();
+					return;
+				}
+
+				User currentUser =  (User) tableview_results.getSelectionModel().getSelectedItem();
+				DBUtils.setUserActiveStatus(event, currentUser.getEmail(), 1);
+				DBUtils.changeScene(event, "Reporting.fxml", "Reporting", email, firstName, lastName, accountType);
+			}
+		}));
+
+		// A listener that looks for a change in table selected
 		cb_reporting_type.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number value, Number new_value) {
@@ -186,6 +221,12 @@ public class ReportingController implements Initializable{
 
 					tableview_results.getColumns().addAll(firstNameCol, lastNameCol, emailCol, aTypeCol, activeCol, totalDonationsCol, totalHoursCol);
 					cb_user_attributes.setItems(FXCollections.observableArrayList("FirstName", "LastName", "Email", "Type", "Active"));
+					button_delete_selected.setVisible(false);
+					button_delete_selected.setManaged(false);
+					button_set_inactive.setVisible(true);
+					button_set_inactive.setManaged(true);
+					button_set_active.setVisible(true);
+					button_set_active.setManaged(true);
 				} else if(table.equals("event")) {
 					TableColumn<User, String> eventIdCol = new TableColumn<>("Event ID");
 					eventIdCol.setCellValueFactory(new PropertyValueFactory<>("eventId"));
@@ -194,17 +235,25 @@ public class ReportingController implements Initializable{
 					nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 					TableColumn<User, String> spotsAvailableCol = new TableColumn<>("Spots");
 					spotsAvailableCol.setCellValueFactory(new PropertyValueFactory<>("spotsAvailable"));
-					TableColumn<User, String> dtStartCol = new TableColumn<>("Starts On");
-					dtStartCol.setCellValueFactory(new PropertyValueFactory<>("dtStart"));
-					TableColumn<User, String> dtEndCol = new TableColumn<>("Ends On");
-					dtEndCol.setCellValueFactory(new PropertyValueFactory<>("dtEnd"));
+					TableColumn<User, String> dateCol = new TableColumn<>("Date");
+					dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
+					TableColumn<User, String> startTimeCol = new TableColumn<>("Starts At");
+					startTimeCol.setCellValueFactory(new PropertyValueFactory<>("startTime"));
+					TableColumn<User, String> endTimeCol = new TableColumn<>("Ends At");
+					endTimeCol.setCellValueFactory(new PropertyValueFactory<>("endTime"));
 					TableColumn<User, String> locationCol = new TableColumn<>("Location");
 					locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
 					TableColumn<User, String> descriptionCol = new TableColumn<>("Description");
 					descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
 
-					tableview_results.getColumns().addAll(eventIdCol, nameCol, spotsAvailableCol, dtStartCol, dtEndCol, locationCol, descriptionCol);
-					cb_user_attributes.setItems(FXCollections.observableArrayList("EventId", "SpotsAvailable", "DtStart", "DtEnd", "Name", "Location", "Description"));
+					tableview_results.getColumns().addAll(eventIdCol, nameCol, spotsAvailableCol, dateCol, startTimeCol, endTimeCol, locationCol, descriptionCol);
+					cb_user_attributes.setItems(FXCollections.observableArrayList("EventId", "SpotsAvailable", "Date", "Name", "Location", "Description"));
+					button_delete_selected.setVisible(true);
+					button_delete_selected.setManaged(true);
+					button_set_inactive.setVisible(false);
+					button_set_inactive.setManaged(false);
+					button_set_active.setVisible(false);
+					button_set_active.setManaged(false);
 				}
 			}
 		});
@@ -310,8 +359,9 @@ public class ReportingController implements Initializable{
 						} else if(table.equals("event")) {
 							String curEventId = resultSet.getInt("EventId") + "";
 							String curSpots = resultSet.getInt("SpotsAvailable") + "";
-							String curStart = resultSet.getDate("DtStart").toString();
-							String curEnd = resultSet.getDate("DtEnd").toString();
+							String curDate = resultSet.getDate("DtStart").toString();
+							String curStart = resultSet.getTime("DtStart").toString();
+							String curEnd = resultSet.getTime("DtEnd").toString();
 							String curName = resultSet.getString("Name");
 							String curLocation = resultSet.getString("Location");
 							String curDesc = resultSet.getString("Description");
@@ -319,7 +369,7 @@ public class ReportingController implements Initializable{
 								curDesc = "";
 							}
 
-							tableview_results.getItems().add(new Event(curEventId, curSpots, curStart, curEnd, curName, curLocation, curDesc));
+							tableview_results.getItems().add(new Event(curEventId, curSpots, curDate, curStart, curEnd, curName, curLocation, curDesc));
 						}
 					}
 				} catch (SQLException e) {
@@ -329,7 +379,15 @@ public class ReportingController implements Initializable{
 		}));
 
 	}
-	
+
+	/**
+	 * Method used set a user's information on the current page.
+	 *
+	 * @param firstName: the user's first name
+	 * @param lastName: the user's last name
+	 * @param email: the user's unique email
+	 * @param accountType: the user's account type
+	 */
 	public void setUserInformation(String firstName, String lastName, String email, String accountType) {
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -340,6 +398,9 @@ public class ReportingController implements Initializable{
 		label_account_type.setText(accountType);
 	}
 
+	/**
+	 * An inner class that is used to create a datatype that is populated in the reporting table for Users.
+	 */
 	protected static class User {
 
 		private final SimpleStringProperty firstName;
@@ -417,21 +478,26 @@ public class ReportingController implements Initializable{
 		}
 	}
 
+	/**
+	 * An inner class that is used to create a datatype that is populated in the reporting table for Events.
+	 */
 	protected static class Event {
 
 		private final SimpleStringProperty eventId;
 		private final SimpleStringProperty spotsAvailable;
-		private final SimpleStringProperty dtStart;
-		private final SimpleStringProperty dtEnd;
+		private final SimpleStringProperty date;
+		private final SimpleStringProperty startTime;
+		private final SimpleStringProperty endTime;
 		private final SimpleStringProperty name;
 		private final SimpleStringProperty location;
 		private final SimpleStringProperty description;
 
-		private Event(String eId, String spots, String start, String end, String n, String loc, String desc) {
+		private Event(String eId, String spots, String dt, String start, String end, String n, String loc, String desc) {
 			this.eventId = new SimpleStringProperty(eId);
 			this.spotsAvailable = new SimpleStringProperty(spots);
-			this.dtStart = new SimpleStringProperty(start);
-			this.dtEnd = new SimpleStringProperty(end);
+			this.date = new SimpleStringProperty(dt);
+			this.startTime = new SimpleStringProperty(start);
+			this.endTime = new SimpleStringProperty(end);
 			this.name = new SimpleStringProperty(n);
 			this.location = new SimpleStringProperty(loc);
 			this.description = new SimpleStringProperty(desc);
@@ -453,20 +519,30 @@ public class ReportingController implements Initializable{
 			spotsAvailable.set(spots);
 		}
 
-		public String getDtStart() {
-			return dtStart.get();
+		public String getDate() {
+			return date.get();
 		}
 
-		public void setDtStart(String start) {
-			dtStart.set(start);
-		}
-		public String getDtEnd() {
-			return dtEnd.get();
+		public void setDate(String dt) {
+			date.set(dt);
 		}
 
-		public void setDtEnd(String end) {
-			dtEnd.set(end);
+		public String getStartTime() {
+			return startTime.get();
 		}
+
+		public void setStartTime(String start) {
+			startTime.set(start);
+		}
+
+		public String getEndTime() {
+			return endTime.get();
+		}
+
+		public void setEndTime(String end) {
+			endTime.set(end);
+		}
+
 		public String getName() {
 			return name.get();
 		}
@@ -474,6 +550,7 @@ public class ReportingController implements Initializable{
 		public void setName(String n) {
 			name.set(n);
 		}
+
 		public String getLocation() {
 			return location.get();
 		}

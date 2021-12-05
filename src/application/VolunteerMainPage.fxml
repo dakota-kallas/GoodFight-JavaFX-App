@@ -3,7 +3,8 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -96,20 +97,6 @@
             </ImageView>
          </children>
       </VBox>
-      <Pane layoutX="220.0" layoutY="45.0" prefHeight="260.0" prefWidth="442.0" style="-fx-border-radius: 10; -fx-background-radius: 10;">
-         <children>
-            <ListView fx:id="listview_my_events" layoutX="14.0" layoutY="42.0" prefHeight="161.0" prefWidth="411.0" style="-fx-background-color: #262626; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #373737;">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ListView>
-            <Label layoutX="178.0" layoutY="14.0" text="My Events:" textFill="WHITE">
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="16.0" />
-               </font>
-            </Label>
-         </children>
-      </Pane>
       <Button fx:id="button_cancel" layoutX="143.0" layoutY="500.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="658.0" style="-fx-background-color: #ec1c2c;" text="Cancel Registration" textFill="WHITE">
          <font>
             <Font name="Arial Rounded MT Bold" size="12.0" />
@@ -118,5 +105,20 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
+      <Pane layoutX="187.0" layoutY="52.0" prefHeight="427.0" prefWidth="570.0" style="-fx-border-radius: 10; -fx-background-radius: 10;">
+         <children>
+            <Label layoutX="201.0" layoutY="10.0" text="My Upcoming Events:" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="16.0" />
+               </font>
+            </Label>
+            <TableView fx:id="tableview_results" layoutX="22.0" layoutY="40.0" prefHeight="373.0" prefWidth="526.0">
+               <columns>
+                  <TableColumn prefWidth="75.0" text="C1" />
+                  <TableColumn prefWidth="75.0" text="C2" />
+               </columns>
+            </TableView>
+         </children>
+      </Pane>
    </children>
 </AnchorPane>

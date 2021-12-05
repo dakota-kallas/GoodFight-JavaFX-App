@@ -1,10 +1,12 @@
 package application;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
@@ -38,7 +40,7 @@ public class ViewEventsController implements Initializable{
 	@FXML private Button button_event_register;
 	@FXML private Button button_cancel_event;
 
-	@FXML private ListView listview_events;
+	@FXML private TableView tableview_results;
 
 	@FXML private Label label_name;
 	@FXML private Label label_account_type;
@@ -55,12 +57,30 @@ public class ViewEventsController implements Initializable{
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		// Configure the TableView
+		tableview_results.setEditable(true);
+		tableview_results.getColumns().clear();
+
+		TableColumn<ReportingController.User, String> nameCol = new TableColumn<>("Name");
+		nameCol.setMinWidth(110);
+		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+		TableColumn<ReportingController.User, String> spotsAvailableCol = new TableColumn<>("Spots");
+		spotsAvailableCol.setCellValueFactory(new PropertyValueFactory<>("spotsAvailable"));
+		TableColumn<ReportingController.User, String> dateCol = new TableColumn<>("Date");
+		dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
+		TableColumn<ReportingController.User, String> startTimeCol = new TableColumn<>("Starts At");
+		startTimeCol.setCellValueFactory(new PropertyValueFactory<>("startTime"));
+		TableColumn<ReportingController.User, String> endTimeCol = new TableColumn<>("Ends At");
+		endTimeCol.setCellValueFactory(new PropertyValueFactory<>("endTime"));
+		TableColumn<ReportingController.User, String> locationCol = new TableColumn<>("Location");
+		locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
+
+		tableview_results.getColumns().addAll(nameCol, spotsAvailableCol, dateCol, startTimeCol, endTimeCol, locationCol);
 
 		// Configure the ListView to display all available events
 		Connection connection = null;
 		PreparedStatement psGetEvents = null;
 		ResultSet resultSet = null;
-		listview_events.setStyle("-fx-font-family: \"Arial Rounded MT\"; -fx-font-size: 12px;");
 
 		try {
 			// Query the database to get all events on or after today's date
@@ -78,9 +98,8 @@ public class ViewEventsController implements Initializable{
 				int eventID = resultSet.getInt("EventId");
 				int spotsAvailable = resultSet.getInt("SpotsAvailable");
 				String dbDate = resultSet.getDate("DtStart").toString();
-				String event = "[" + eventID + "] " + eventName + "  Spots: " + spotsAvailable  + "  Location: " + eventLocation  + "  Date: " + dbDate;
 
-				listview_events.getItems().add(event);
+				tableview_results.getItems().add(new Event(eventID + "", spotsAvailable + "", dbDate, eventStTime, eventEdTime, eventName, eventLocation));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -176,15 +195,15 @@ public class ViewEventsController implements Initializable{
 			@Override
 			public void handle(ActionEvent event) {
 				// Check if an event is selected
-				if (listview_events.getSelectionModel().isEmpty()) {
+				if (tableview_results.getSelectionModel().isEmpty()) {
 					// If an event is not selected, show an error
 					System.out.println("No event selected.");
 					Alert alert = new Alert(Alert.AlertType.ERROR);
 					alert.setContentText("Please select an event.");
 					alert.show();
 				} else {
-					String selectedEvent = listview_events.getSelectionModel().getSelectedItem().toString();
-					int eventId = Integer.valueOf(selectedEvent.substring(1, 5));
+					Event currentEvent =  (Event) tableview_results.getSelectionModel().getSelectedItem();
+					int eventId = Integer.valueOf(currentEvent.getEventId());
 
 					// Query the database for more information on the event
 					Connection connection = null;
@@ -297,7 +316,7 @@ public class ViewEventsController implements Initializable{
 			@Override
 			public void handle(ActionEvent event) {
 				// Check if an event is selected
-				if (listview_events.getSelectionModel().isEmpty()) {
+				if (tableview_results.getSelectionModel().isEmpty()) {
 					// If an event is not selected, show an error
 					System.out.println("No event selected.");
 					Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -305,9 +324,9 @@ public class ViewEventsController implements Initializable{
 					alert.show();
 				} else {
 					// If an event is selected, register for it
-					String selectedEvent = listview_events.getSelectionModel().getSelectedItem().toString();
-					int eventId = Integer.valueOf(selectedEvent.substring(1, 5));
-					String date = selectedEvent.substring(selectedEvent.length() - 10);
+					Event currentEvent =  (Event) tableview_results.getSelectionModel().getSelectedItem();
+					int eventId = Integer.valueOf(currentEvent.getEventId());
+					String date = currentEvent.getDate();
 
 					DBUtils.registerForEvent(event, eventId, date, email, firstName, lastName, accountType);
 				}
@@ -315,7 +334,15 @@ public class ViewEventsController implements Initializable{
 		}));
 
 	}
-	
+
+	/**
+	 * Method used set a user's information on the current page.
+	 *
+	 * @param firstName: the user's first name
+	 * @param lastName: the user's last name
+	 * @param email: the user's unique email
+	 * @param accountType: the user's account type
+	 */
 	public void setUserInformation(String firstName, String lastName, String email, String accountType) {
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -345,5 +372,85 @@ public class ViewEventsController implements Initializable{
 
 		pane_event_view.setVisible(false);
 		pane_event_view.setManaged(false);
+	}
+
+	/**
+	 * An inner class that is used to create a datatype that is populated in the reporting table for Events.
+	 */
+	protected static class Event {
+
+		private final SimpleStringProperty eventId;
+		private final SimpleStringProperty spotsAvailable;
+		private final SimpleStringProperty date;
+		private final SimpleStringProperty startTime;
+		private final SimpleStringProperty endTime;
+		private final SimpleStringProperty name;
+		private final SimpleStringProperty location;
+
+		private Event(String eId, String spots, String dt, String start, String end, String n, String loc) {
+			this.eventId = new SimpleStringProperty(eId);
+			this.spotsAvailable = new SimpleStringProperty(spots);
+			this.date = new SimpleStringProperty(dt);
+			this.startTime = new SimpleStringProperty(start);
+			this.endTime = new SimpleStringProperty(end);
+			this.name = new SimpleStringProperty(n);
+			this.location = new SimpleStringProperty(loc);
+		}
+
+		public String getEventId() {
+			return eventId.get();
+		}
+
+		public void setEventId(String n) {
+			eventId.set(n);
+		}
+
+		public String getSpotsAvailable() {
+			return spotsAvailable.get();
+		}
+
+		public void setSpotsAvailable(String spots) {
+			spotsAvailable.set(spots);
+		}
+
+		public String getDate() {
+			return date.get();
+		}
+
+		public void setDate(String dt) {
+			date.set(dt);
+		}
+
+		public String getStartTime() {
+			return startTime.get();
+		}
+
+		public void setStartTime(String start) {
+			startTime.set(start);
+		}
+
+		public String getEndTime() {
+			return endTime.get();
+		}
+
+		public void setEndTime(String end) {
+			endTime.set(end);
+		}
+
+		public String getName() {
+			return name.get();
+		}
+
+		public void setName(String n) {
+			name.set(n);
+		}
+
+		public String getLocation() {
+			return location.get();
+		}
+
+		public void setLocation(String loc) {
+			location.set(loc);
+		}
 	}
 }

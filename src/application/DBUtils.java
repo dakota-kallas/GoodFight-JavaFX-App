@@ -913,12 +913,12 @@ public class DBUtils {
 	}
 
 	/**
-	 * Method set a user's active status to inactive.
+	 * Method to update a user's active status.
 	 *
 	 * @param event: the event that caused the method to run.
 	 * @param email: the email entered by the user.
 	 */
-	public static void setUserInactive(ActionEvent event, String email) {
+	public static void setUserActiveStatus(ActionEvent event, String email, int status) {
 		// Set up variables to connect and query the database.
 		Connection connection = null;
 		PreparedStatement psUpdate = null;
@@ -926,13 +926,17 @@ public class DBUtils {
 		try {
 			// Update the user information in the database
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
-			psUpdate = connection.prepareStatement("UPDATE user SET Active = 0 WHERE Email = ?");
-			psUpdate.setString(1, email);
+			psUpdate = connection.prepareStatement("UPDATE user SET Active = ? WHERE Email = ?");
+			psUpdate.setInt(1, status);
+			psUpdate.setString(2, email);
 			psUpdate.executeUpdate();
-
+			String statusMsg = "true";
+			if(status == 0) {
+				statusMsg = "false";
+			}
 			// Confirm to the user that they have cancelled their registration
 			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-			alert.setContentText("User has been set to inactive.");
+			alert.setContentText("User active status has been set to " + statusMsg + ".");
 			alert.show();
 
 		} catch (SQLException e) {

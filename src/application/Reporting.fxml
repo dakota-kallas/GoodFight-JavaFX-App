@@ -155,5 +155,21 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
+      <Button fx:id="button_set_active" layoutX="472.0" layoutY="500.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="328.0" style="-fx-background-color: #ec1c2c;" text="Set Active" textFill="WHITE">
+         <font>
+            <Font name="Arial Rounded MT Bold" size="14.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <Button fx:id="button_set_inactive" layoutX="143.0" layoutY="500.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="328.0" style="-fx-background-color: #ec1c2c;" text="Set Inactive" textFill="WHITE">
+         <font>
+            <Font name="Arial Rounded MT Bold" size="14.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
    </children>
 </AnchorPane>
