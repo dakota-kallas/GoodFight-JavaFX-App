@@ -466,18 +466,8 @@ public class DBUtils {
 			// Connect to the database.
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
 
-			// Cancel all attendance from the event
-			psCancelAttended = connection.prepareStatement("DELETE FROM attended WHERE EventId = ?");
-			psCancelAttended.setInt(1, eventId);
-			psCancelAttended.executeUpdate();
-
-			// Convert all restricted donations from the event to unrestricted donations
-			psCancelDonatedTo = connection.prepareStatement("DELETE FROM donated_to WHERE EventId = ?");
-			psCancelDonatedTo.setInt(1, eventId);
-			psCancelDonatedTo.executeUpdate();
-
 			// Cancel the event
-			psCancelEvent = connection.prepareStatement("DELETE FROM event WHERE EventId = ?");
+			psCancelEvent = connection.prepareStatement("UPDATE event SET Active = 0 WHERE EventId = ?");
 			psCancelEvent.setInt(1, eventId);
 			psCancelEvent.executeUpdate();
 

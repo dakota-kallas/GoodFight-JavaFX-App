@@ -85,7 +85,7 @@ public class ViewEventsController implements Initializable{
 		try {
 			// Query the database to get all events on or after today's date
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
-			psGetEvents = connection.prepareStatement("SELECT * FROM event WHERE DtStart >= ?");
+			psGetEvents = connection.prepareStatement("SELECT * FROM event WHERE DtStart >= ? AND Active = 1");
 			psGetEvents.setString(1, LocalDate.now().toString());
 			resultSet = psGetEvents.executeQuery();
 

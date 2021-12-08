@@ -243,10 +243,12 @@ public class ReportingController implements Initializable{
 					endTimeCol.setCellValueFactory(new PropertyValueFactory<>("endTime"));
 					TableColumn<User, String> locationCol = new TableColumn<>("Location");
 					locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
+					TableColumn<User, String> activeCol = new TableColumn<>("Active");
+					activeCol.setCellValueFactory(new PropertyValueFactory<>("active"));
 					TableColumn<User, String> descriptionCol = new TableColumn<>("Description");
 					descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
 
-					tableview_results.getColumns().addAll(eventIdCol, nameCol, spotsAvailableCol, dateCol, startTimeCol, endTimeCol, locationCol, descriptionCol);
+					tableview_results.getColumns().addAll(eventIdCol, nameCol, spotsAvailableCol, dateCol, startTimeCol, endTimeCol, locationCol, activeCol, descriptionCol);
 					cb_user_attributes.setItems(FXCollections.observableArrayList("EventId", "SpotsAvailable", "Date", "Name", "Location", "Description"));
 					button_delete_selected.setVisible(true);
 					button_delete_selected.setManaged(true);
@@ -321,9 +323,9 @@ public class ReportingController implements Initializable{
 						}
 					} else if(table.equals("event")) {
 						if(attribute.equals("") || searchValue.equals("")) {
-							psQuery = connection.prepareStatement("SELECT EventId, SpotsAvailable, DtStart, DtEnd, Name, Location, Description FROM " + table);
+							psQuery = connection.prepareStatement("SELECT EventId, SpotsAvailable, DtStart, DtEnd, Name, Location, Description, Active FROM " + table);
 						} else {
-							psQuery = connection.prepareStatement("SELECT EventId, SpotsAvailable, DtStart, DtEnd, Name, Location, Description FROM " + table + " WHERE " + attribute + " LIKE ?");
+							psQuery = connection.prepareStatement("SELECT EventId, SpotsAvailable, DtStart, DtEnd, Name, Location, Description, Active FROM " + table + " WHERE " + attribute + " LIKE ?");
 							if(attribute.equals("EventId") || attribute.equals("SpotsAvailable")) {
 								try {
 									psQuery.setInt(1, Integer.valueOf(searchValue));
@@ -365,11 +367,17 @@ public class ReportingController implements Initializable{
 							String curName = resultSet.getString("Name");
 							String curLocation = resultSet.getString("Location");
 							String curDesc = resultSet.getString("Description");
+							String curActive = "" + resultSet.getInt("Active");
 							if(curDesc == null) {
 								curDesc = "";
 							}
+							if(curActive.equals("1")) {
+								curActive = "True";
+							} else {
+								curActive = "False";
+							}
 
-							tableview_results.getItems().add(new Event(curEventId, curSpots, curDate, curStart, curEnd, curName, curLocation, curDesc));
+							tableview_results.getItems().add(new Event(curEventId, curSpots, curDate, curStart, curEnd, curName, curLocation, curDesc, curActive));
 						}
 					}
 				} catch (SQLException e) {
@@ -491,8 +499,9 @@ public class ReportingController implements Initializable{
 		private final SimpleStringProperty name;
 		private final SimpleStringProperty location;
 		private final SimpleStringProperty description;
+		private final SimpleStringProperty active;
 
-		private Event(String eId, String spots, String dt, String start, String end, String n, String loc, String desc) {
+		private Event(String eId, String spots, String dt, String start, String end, String n, String loc, String desc, String activity) {
 			this.eventId = new SimpleStringProperty(eId);
 			this.spotsAvailable = new SimpleStringProperty(spots);
 			this.date = new SimpleStringProperty(dt);
@@ -501,6 +510,7 @@ public class ReportingController implements Initializable{
 			this.name = new SimpleStringProperty(n);
 			this.location = new SimpleStringProperty(loc);
 			this.description = new SimpleStringProperty(desc);
+			this.active = new SimpleStringProperty(activity);
 		}
 
 		public String getEventId() {
@@ -565,6 +575,14 @@ public class ReportingController implements Initializable{
 
 		public void setDescription(String desc) {
 			description.set(desc);
+		}
+
+		public String getActive() {
+			return active.get();
+		}
+
+		public void setActive(String activity) {
+			active.set(activity);
 		}
 	}
 }

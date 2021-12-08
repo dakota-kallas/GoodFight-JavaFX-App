@@ -77,6 +77,16 @@
                   <Font name="Arial Rounded MT Bold" size="25.0" />
                </font>
             </Label>
+            <Label layoutX="186.0" layoutY="460.0" text="Need help?" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Rockwell Extra Bold" size="14.0" />
+               </font>
+            </Label>
+            <Button fx:id="button_user_manual" layoutX="280.0" layoutY="455.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;" text="User Manual" textFill="#ff606d" underline="true">
+               <font>
+                  <Font name="Rockwell Extra Bold" size="14.0" />
+               </font>
+            </Button>
          </children>
       </AnchorPane>
    </children>

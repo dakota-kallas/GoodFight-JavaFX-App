@@ -1,6 +1,8 @@
 package application;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -22,18 +24,27 @@ public class VolunteerLoggedInController implements Initializable{
 	@FXML private Button button_donate;
 
 	@FXML private TableView tableview_results;
+	@FXML private CheckBox checkbox_cancelled;
+	@FXML private Label label_cancelled;
 	@FXML private Button button_cancel;
 	
 	@FXML private Label label_name;
 	@FXML private Label label_account_type;
 
 	private String firstName = "",lastName = "", email = "", accountType = "";
-	
+
+	/**
+	 * Method that runs listening for Action Events.
+	 *
+	 * @param location
+	 * @param resources
+	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// Configure the TableView
 		tableview_results.setEditable(true);
 		tableview_results.getColumns().clear();
+		label_cancelled.setVisible(false);
 
 		TableColumn<ReportingController.User, String> eventIdCol = new TableColumn<>("Event ID");
 		eventIdCol.setCellValueFactory(new PropertyValueFactory<>("eventId"));
@@ -52,6 +63,69 @@ public class VolunteerLoggedInController implements Initializable{
 		locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
 
 		tableview_results.getColumns().addAll(eventIdCol, nameCol, spotsAvailableCol, dateCol, startTimeCol, endTimeCol, locationCol);
+
+		// Listener to update GUI and Table when the "Show cancelled?" checkbox is changed
+		checkbox_cancelled.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
+				tableview_results.getItems().clear();
+				Connection connection = null;
+				PreparedStatement psGetEvents = null;
+				ResultSet resultSet = null;
+				int active = 0;
+				label_cancelled.setVisible(true);
+
+				// Check if the "Show cancelled?" box is not checked
+				if(!new_val) {
+					active = 1;
+					label_cancelled.setVisible(false);
+				}
+
+				try {
+					connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
+					psGetEvents = connection.prepareStatement("SELECT Name, Location, DtStart, DtEnd, EventId, SpotsAvailable, Email FROM event NATURAL JOIN attended WHERE email = ? AND DtStart >= ? AND Active = ?");
+					psGetEvents.setString(1, email);
+					psGetEvents.setString(2, LocalDate.now().toString());
+					psGetEvents.setInt(3, active);
+					resultSet = psGetEvents.executeQuery();
+
+					while(resultSet.next()) {
+						String eventName = resultSet.getString("Name");
+						String eventLocation = resultSet.getString("Location");
+						String eventStTime = resultSet.getTime("DtStart").toString();
+						String eventEdTime = resultSet.getTime("DtEnd").toString();
+						int eventID = resultSet.getInt("EventId");
+						int spotsAvailable = resultSet.getInt("SpotsAvailable");
+						String Date = resultSet.getDate("DtStart").toString();
+
+						tableview_results.getItems().add(new Event(eventID + "", spotsAvailable + "", Date, eventStTime, eventEdTime, eventName, eventLocation));
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				} finally {
+					if (resultSet != null) {
+						try {
+							resultSet.close();
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+					}
+					if (psGetEvents != null) {
+						try {
+							psGetEvents.close();
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+					}
+					if (connection != null) {
+						try {
+							connection.close();
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		});
 
 		// Assigned the action that is caused by the "Logout" button being clicked.
 		button_logout.setOnAction(new EventHandler<ActionEvent>() {
@@ -114,7 +188,15 @@ public class VolunteerLoggedInController implements Initializable{
 			}
 		}));
 	}
-	
+
+	/**
+	 * Method used set a user's information on the current page.
+	 *
+	 * @param firstName: the user's first name
+	 * @param lastName: the user's last name
+	 * @param email: the user's unique email
+	 * @param accountType: the user's account type
+	 */
 	public void setUserInformation(String firstName, String lastName, String email, String accountType) {
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -140,7 +222,7 @@ public class VolunteerLoggedInController implements Initializable{
 
 		try {
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
-			psGetEvents = connection.prepareStatement("SELECT Name, Location, DtStart, DtEnd, EventId, SpotsAvailable, Email FROM event NATURAL JOIN attended WHERE email = ? AND DtStart >= ?");
+			psGetEvents = connection.prepareStatement("SELECT Name, Location, DtStart, DtEnd, EventId, SpotsAvailable, Email FROM event NATURAL JOIN attended WHERE email = ? AND DtStart >= ? AND Active = 1");
 			psGetEvents.setString(1, email);
 			psGetEvents.setString(2, LocalDate.now().toString());
 			resultSet = psGetEvents.executeQuery();

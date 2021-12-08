@@ -8,13 +8,18 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 public class Controller implements Initializable {
 
     @FXML private Button button_login;
     @FXML private Button button_sign_up;
+    @FXML private Button button_user_manual;
 
     @FXML private TextField tf_email;
     @FXML private PasswordField pf_password;
@@ -35,6 +40,20 @@ public class Controller implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 DBUtils.changeScene(event, "Register.fxml", "Register", null, null, null, null);
+            }
+        });
+
+        // Assigned the action that is caused by the "Sign Up!" button being clicked.
+        button_user_manual.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                File file=new File("src/application/manual.pdf");
+                Desktop desktop = Desktop.getDesktop();
+                try {
+                    desktop.open(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
