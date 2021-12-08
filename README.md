@@ -13,6 +13,6 @@ Once it is installed, you will be able to run the Main.java file in the src/appl
 directory.
 You will then need to setup a localhost database connection on MySQL Workbench using the data
 importer of the database dump in the database directory as a new "npdb" schema.
-/n_Note: You will need to match the JDBC connection settings used in the DBUtils.java class._
+<br />_Note: You will need to match the JDBC connection settings used in the DBUtils.java class._
 
 All project files can be found in the main branch.
