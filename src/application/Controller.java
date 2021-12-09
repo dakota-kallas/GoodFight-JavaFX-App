@@ -47,13 +47,7 @@ public class Controller implements Initializable {
         button_user_manual.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                File file=new File("src/application/manual.pdf");
-                Desktop desktop = Desktop.getDesktop();
-                try {
-                    desktop.open(file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                DBUtils.changeScene(event, "Help.fxml", "Need help?", null, null, null, null);
             }
         });
     }

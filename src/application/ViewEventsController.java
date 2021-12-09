@@ -36,6 +36,7 @@ public class ViewEventsController implements Initializable{
 	@FXML private Label label_event_end_dt;
 	@FXML private Label label_event_spots_available;
 	@FXML private Label label_event_donations;
+	@FXML private Label label_description;
 	@FXML private Button button_close_event;
 	@FXML private Button button_event_register;
 	@FXML private Button button_cancel_event;
@@ -211,7 +212,7 @@ public class ViewEventsController implements Initializable{
 					ResultSet resultSet = null;
 					try {
 						connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
-						psGetEvent = connection.prepareStatement("SELECT Name, Location, DtStart, DtEnd, SpotsAvailable, sum(Amount) AS TotalDonations FROM event NATURAL LEFT JOIN donated_to NATURAL LEFT JOIN donation WHERE EventId = ?");
+						psGetEvent = connection.prepareStatement("SELECT Name, Location, DtStart, DtEnd, SpotsAvailable, Description, sum(Amount) AS TotalDonations FROM event NATURAL LEFT JOIN donated_to NATURAL LEFT JOIN donation WHERE EventId = ?");
 						psGetEvent.setString(1, eventId + "");
 						resultSet = psGetEvent.executeQuery();
 
@@ -227,6 +228,7 @@ public class ViewEventsController implements Initializable{
 						String dateEnd = resultSet.getDate("DtEnd").toString();
 						int endTime = Integer.valueOf(resultSet.getTime("DtEnd").toString().substring(0,2));
 						int donations = resultSet.getInt("TotalDonations");
+						String description = resultSet.getString("Description");
 
 						// Determine if the time is in AM or PM
 						String startAMPM = "AM";
@@ -248,6 +250,9 @@ public class ViewEventsController implements Initializable{
 						label_event_end_dt.setText(dateEnd + " @ " + endTime + endAMPM);
 						label_event_spots_available.setText(spotsAvailable + "");
 						label_event_donations.setText("$" + donations);
+						if(description != null) {
+							label_description.setText(description);
+						}
 
 					} catch (SQLException e) {
 						e.printStackTrace();
@@ -375,7 +380,7 @@ public class ViewEventsController implements Initializable{
 	}
 
 	/**
-	 * An inner class that is used to create a datatype that is populated in the reporting table for Events.
+	 * An inner class that is used to create a datatype for Events.
 	 */
 	protected static class Event {
 

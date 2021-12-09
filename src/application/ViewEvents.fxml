@@ -137,7 +137,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <Pane fx:id="pane_event_view" layoutX="324.0" layoutY="125.0" prefHeight="310.0" prefWidth="300.0" style="-fx-background-color: #ffffff; -fx-border-color: #373737; -fx-border-radius: 8; -fx-background-radius: 8; -fx-border-width: 3;">
+      <Pane fx:id="pane_event_view" layoutX="324.0" layoutY="125.0" prefHeight="363.0" prefWidth="300.0" style="-fx-background-color: #ffffff; -fx-border-color: #373737; -fx-border-radius: 8; -fx-background-radius: 8; -fx-border-width: 3;">
          <children>
             <Label fx:id="label_event_name" alignment="CENTER" layoutX="26.0" layoutY="23.0" prefHeight="20.0" prefWidth="248.0" text="Event Name" textAlignment="CENTER">
                <font>
@@ -222,7 +222,7 @@
                   <Image url="@donation-icon.png" />
                </image>
             </ImageView>
-            <Button fx:id="button_event_register" layoutX="217.0" layoutY="269.0" mnemonicParsing="false" style="-fx-background-color: #ec1c2c;" text="Register" textFill="WHITE">
+            <Button fx:id="button_event_register" layoutX="217.0" layoutY="323.0" mnemonicParsing="false" style="-fx-background-color: #ec1c2c;" text="Register" textFill="WHITE">
                <font>
                   <Font name="Arial Rounded MT Bold" size="12.0" />
                </font>
@@ -230,7 +230,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="button_cancel_event" layoutX="26.0" layoutY="269.0" mnemonicParsing="false" style="-fx-background-color: #ec1c2c;" text="Cancel Event" textFill="WHITE">
+            <Button fx:id="button_cancel_event" layoutX="26.0" layoutY="323.0" mnemonicParsing="false" style="-fx-background-color: #ec1c2c;" text="Cancel Event" textFill="WHITE">
                <font>
                   <Font name="Arial Rounded MT Bold" size="12.0" />
                </font>
@@ -238,6 +238,21 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
+            <Label layoutX="47.0" layoutY="249.0" text="Description:">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="label_description" alignment="TOP_LEFT" layoutX="47.0" layoutY="270.0" prefHeight="45.0" prefWidth="214.0" text="None" wrapText="true">
+               <font>
+                  <Font name="Arial Rounded MT" size="12.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="26.0" fitWidth="29.0" layoutX="18.0" layoutY="252.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@description-icon.png" />
+               </image>
+            </ImageView>
          </children>
          <effect>
             <DropShadow blurType="GAUSSIAN" height="36.03" radius="17.4225" width="35.66" />

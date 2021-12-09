@@ -570,18 +570,18 @@ public class DBUtils {
 			Date endDate = resultSet.getDate("DtEnd");
 			Time endTime = resultSet.getTime("DtEnd");
 			int numEndTime = Integer.valueOf(endTime.toString().substring(0,2));
-			psCheckUserRegistered = connection.prepareStatement("SELECT EventId, DtStart, DtEnd FROM attended NATURAL JOIN event WHERE Email = ?");
+			psCheckUserRegistered = connection.prepareStatement("SELECT EventId, DtStart, DtEnd, Active FROM attended NATURAL JOIN event WHERE Email = ?");
 			psCheckUserRegistered.setString(1, email);
 			resultSet = psCheckUserRegistered.executeQuery();
 
 			while(resultSet.next()) {
 				// Check if the dates are the same
-				if(resultSet.getDate("DtStart").equals(startDate)) {
+				if(resultSet.getDate("DtStart").equals(startDate) && resultSet.getInt("Active") == 1) {
 					int curStartTime = Integer.valueOf(resultSet.getTime("DtStart").toString().substring(0,2));
 					int curEndTime = Integer.valueOf(resultSet.getTime("DtEnd").toString().substring(0,2));
 
 					// Check if the event starts while another event the user is attending is going on
-					if(curStartTime < numEndTime && curStartTime > numStartTime) {
+					if(numStartTime > curStartTime && numStartTime < curEndTime) {
 						System.out.println("This event is is at the same time as another the user is registered for.");
 						Alert alert = new Alert(Alert.AlertType.ERROR);
 						alert.setContentText("This event conflicts with another event you are registered for.");
@@ -589,7 +589,15 @@ public class DBUtils {
 						return;
 					}
 					// Check if the event ends while another event the user is attending is going on
-					else if (curEndTime < numEndTime && curEndTime > numStartTime) {
+					else if (numEndTime < curEndTime && numEndTime > curStartTime) {
+						System.out.println("This event is is at the same time as another the user is registered for.");
+						Alert alert = new Alert(Alert.AlertType.ERROR);
+						alert.setContentText("This event conflicts with another event you are registered for.");
+						alert.show();
+						return;
+					}
+					// Check if the event starts before and ends after another event the user is attending
+					else if (numEndTime > curEndTime && numStartTime < curStartTime) {
 						System.out.println("This event is is at the same time as another the user is registered for.");
 						Alert alert = new Alert(Alert.AlertType.ERROR);
 						alert.setContentText("This event conflicts with another event you are registered for.");

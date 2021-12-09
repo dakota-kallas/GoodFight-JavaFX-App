@@ -3,8 +3,9 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -121,11 +122,6 @@
                   <Font name="Arial Rounded MT Bold" size="18.0" />
                </font>
             </Label>
-            <ListView fx:id="listview_events" layoutX="114.0" layoutY="55.0" prefHeight="208.0" prefWidth="411.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #373737; -fx-background-color: #262626;">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ListView>
             <RadioButton fx:id="rd_100" layoutX="178.0" layoutY="374.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="13.0" scaleX="1.25" scaleY="1.25" text="100" textFill="TRANSPARENT">
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -167,12 +163,12 @@
                   <Font name="Arial Rounded MT Bold" size="14.0" />
                </font>
             </Label>
-            <Label layoutX="14.0" layoutY="10.0" text="Total Contribution:" textFill="WHITE">
+            <Label layoutX="57.0" layoutY="10.0" text="Your Contribution:" textFill="WHITE">
                <font>
                   <Font name="Arial Rounded MT Bold" size="12.0" />
                </font>
             </Label>
-            <Label fx:id="label_contribution" layoutX="129.0" layoutY="10.0" prefHeight="15.0" prefWidth="94.0" text="\$0.00" textFill="WHITE">
+            <Label fx:id="label_contribution" layoutX="172.0" layoutY="10.0" prefHeight="15.0" prefWidth="94.0" text="\$0.00" textFill="WHITE">
                <font>
                   <Font name="Arial Rounded MT" size="12.0" />
                </font>
@@ -212,6 +208,22 @@
                   <Font size="14.0" />
                </font>
             </TextField>
+            <TableView fx:id="tableview_results" layoutX="88.0" layoutY="57.0" prefHeight="208.0" prefWidth="460.0">
+               <columns>
+                  <TableColumn prefWidth="75.0" text="C1" />
+                  <TableColumn prefWidth="75.0" text="C2" />
+               </columns>
+            </TableView>
+            <Label fx:id="label_org" layoutX="404.0" layoutY="10.0" text="Organization Total:" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="label_org_total" layoutX="523.0" layoutY="10.0" prefHeight="15.0" prefWidth="94.0" text="\$0.00" textFill="WHITE">
+               <font>
+                  <Font name="Arial Rounded MT" size="12.0" />
+               </font>
+            </Label>
          </children>
       </Pane>
       <Button fx:id="button_submit_donation" layoutX="143.0" layoutY="500.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="657.0" style="-fx-background-color: #ec1c2c;" text="Donate" textFill="WHITE">

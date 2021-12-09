@@ -300,7 +300,7 @@ public class ReportingController implements Initializable{
 					connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
 					if(table.equals("user")) {
 						if(attribute.equals("") || searchValue.equals("")) {
-							psQuery = connection.prepareStatement("SELECT FirstName, LastName, Email, Type, Active, TotalHours, TotalDonations FROM user NATURAL LEFT JOIN (SELECT Email, sum(HoursAttended) AS TotalHours FROM attended GROUP BY Email) AS HoursQuery NATURAL LEFT JOIN (SELECT Email, sum(Amount) AS TotalDonations FROM user NATURAL LEFT JOIN donated_by NATURAL LEFT JOIN donation GROUP BY Email) AS DonationQuery GROUP BY Email");
+							psQuery = connection.prepareStatement("SELECT FirstName, LastName, Email, Type, Active, TotalHours, TotalDonations FROM user NATURAL LEFT JOIN (SELECT Email, sum(HoursAttended) AS TotalHours FROM attended GROUP BY Email) AS HoursQuery NATURAL LEFT JOIN (SELECT Email, sum(Amount) AS TotalDonations FROM user NATURAL LEFT JOIN donated_by NATURAL LEFT JOIN donation GROUP BY Email) AS DonationQuery GROUP BY Email ORDER BY Active DESC, LastName, FirstName");
 						} else {
 							if(attribute.equals("Active")) {
 								psQuery = connection.prepareStatement("SELECT FirstName, LastName, Email, Type, Active,  TotalHours, TotalDonations FROM user NATURAL LEFT JOIN (SELECT Email, sum(HoursAttended) AS TotalHours FROM attended GROUP BY Email) AS HoursQuery NATURAL LEFT JOIN (SELECT Email, sum(Amount) AS TotalDonations FROM user NATURAL LEFT JOIN donated_by NATURAL LEFT JOIN donation GROUP BY Email) AS DonationQuery WHERE " + attribute + " = ? GROUP BY Email");
@@ -323,7 +323,7 @@ public class ReportingController implements Initializable{
 						}
 					} else if(table.equals("event")) {
 						if(attribute.equals("") || searchValue.equals("")) {
-							psQuery = connection.prepareStatement("SELECT EventId, SpotsAvailable, DtStart, DtEnd, Name, Location, Description, Active FROM " + table);
+							psQuery = connection.prepareStatement("SELECT EventId, SpotsAvailable, DtStart, DtEnd, Name, Location, Description, Active FROM " + table + " ORDER BY Active DESC, DtStart DESC, Name");
 						} else {
 							psQuery = connection.prepareStatement("SELECT EventId, SpotsAvailable, DtStart, DtEnd, Name, Location, Description, Active FROM " + table + " WHERE " + attribute + " LIKE ?");
 							if(attribute.equals("EventId") || attribute.equals("SpotsAvailable")) {

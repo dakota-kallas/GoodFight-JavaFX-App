@@ -1,10 +1,12 @@
 package application;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
 import java.sql.*;
@@ -21,7 +23,7 @@ public class DonatePageController implements Initializable{
 	@FXML private Button button_donate;
 	@FXML private Button button_reporting;
 
-	@FXML private ListView listview_events;
+	@FXML private TableView tableview_results;
 	@FXML private RadioButton rd_restricted;
 	@FXML private RadioButton rd_unrestricted;
 	@FXML private RadioButton rd_25;
@@ -32,6 +34,8 @@ public class DonatePageController implements Initializable{
 	@FXML private TextField tf_other_amount;
 	@FXML private Button button_submit_donation;
 	@FXML private Label label_contribution;
+	@FXML private Label label_org;
+	@FXML private Label label_org_total;
 	
 	@FXML private Label label_name;
 	@FXML private Label label_account_type;
@@ -46,6 +50,75 @@ public class DonatePageController implements Initializable{
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		// Configure the TableView
+		tableview_results.setEditable(true);
+		tableview_results.getColumns().clear();
+
+		TableColumn<ReportingController.User, String> eventIdCol = new TableColumn<>("Event ID");
+		eventIdCol.setCellValueFactory(new PropertyValueFactory<>("eventId"));
+		TableColumn<ReportingController.User, String> nameCol = new TableColumn<>("Name");
+		nameCol.setMinWidth(110);
+		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+		TableColumn<ReportingController.User, String> donationsCol = new TableColumn<>("Donations");
+		donationsCol.setCellValueFactory(new PropertyValueFactory<>("donations"));
+		TableColumn<ReportingController.User, String> dateCol = new TableColumn<>("Date");
+		dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
+		TableColumn<ReportingController.User, String> startTimeCol = new TableColumn<>("Starts At");
+		startTimeCol.setCellValueFactory(new PropertyValueFactory<>("startTime"));
+		TableColumn<ReportingController.User, String> endTimeCol = new TableColumn<>("Ends At");
+		endTimeCol.setCellValueFactory(new PropertyValueFactory<>("endTime"));
+		TableColumn<ReportingController.User, String> locationCol = new TableColumn<>("Location");
+		locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
+
+		tableview_results.getColumns().addAll(eventIdCol, nameCol, donationsCol, dateCol, startTimeCol, endTimeCol, locationCol);
+
+		// Configure the TableView to display all the user's events
+		Connection connection = null;
+		PreparedStatement psGetEvents = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
+			psGetEvents = connection.prepareStatement("SELECT Name, Location, DtStart, DtEnd, event.EventId, Donations FROM event NATURAL LEFT JOIN (Select EventId, sum(Amount) AS Donations FROM donated_to NATURAL JOIN donation GROUP BY EventId) AS TotDonations WHERE DtStart >= ? AND Active = 1 GROUP BY event.EventId");
+			psGetEvents.setString(1, LocalDate.now().toString());
+			resultSet = psGetEvents.executeQuery();
+
+			while(resultSet.next()) {
+				String eventName = resultSet.getString("Name");
+				String eventLocation = resultSet.getString("Location");
+				String eventStTime = resultSet.getTime("DtStart").toString();
+				String eventEdTime = resultSet.getTime("DtEnd").toString();
+				int eventID = resultSet.getInt("EventId");
+				String donations = "$" + resultSet.getInt("Donations");
+				String Date = resultSet.getDate("DtStart").toString();
+
+				tableview_results.getItems().add(new Event(eventID + "", donations + "", Date, eventStTime, eventEdTime, eventName, eventLocation));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (resultSet != null) {
+				try {
+					resultSet.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (psGetEvents != null) {
+				try {
+					psGetEvents.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 
 		//Configure the radio buttons
 		ToggleGroup donationTypeToggle = new ToggleGroup();
@@ -148,7 +221,7 @@ public class DonatePageController implements Initializable{
 					DBUtils.processUnrestrictedDonation(event, amount, email, firstName, lastName, accountType);
 				} else {
 					// Check if an event is selected
-					if (listview_events.getSelectionModel().isEmpty()) {
+					if (tableview_results.getSelectionModel().isEmpty()) {
 						// If an event is not selected, show an error
 						System.out.println("No event selected.");
 						Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -156,8 +229,8 @@ public class DonatePageController implements Initializable{
 						alert.show();
 					} else {
 						// If an event is selected, donate to said event
-						String selectedEvent = listview_events.getSelectionModel().getSelectedItem().toString();
-						int eventId = Integer.valueOf(selectedEvent.substring(1, 5));
+						Event currentEvent =  (Event) tableview_results.getSelectionModel().getSelectedItem();
+						int eventId = Integer.valueOf(currentEvent.getEventId());
 
 						DBUtils.processRestrictedDonation(event, eventId, amount, email, firstName, lastName, accountType);
 					}
@@ -182,6 +255,9 @@ public class DonatePageController implements Initializable{
 
 			button_reporting.setVisible(false);
 			button_reporting.setManaged(false);
+
+			label_org.setVisible(false);
+			label_org_total.setVisible(false);
 		} else if (accountType.equals("Volunteer")) {
 			button_create_event.setVisible(false);
 			button_create_event.setManaged(false);
@@ -191,35 +267,19 @@ public class DonatePageController implements Initializable{
 
 			button_donate.setVisible(false);
 			button_donate.setManaged(false);
+
+			label_org.setVisible(false);
+			label_org_total.setVisible(false);
 		}
 
-		// Configure the ListView to display all the events
+		// Find the total donation amount of the user
 		Connection connection = null;
-		PreparedStatement psGetEvents = null;
 		PreparedStatement psGetDonations = null;
 		ResultSet resultSet = null;
 
 		try {
 			// Query the database to get all events on or after today's date
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
-			psGetEvents = connection.prepareStatement("SELECT * FROM event WHERE DtStart >= ?");
-			psGetEvents.setString(1, LocalDate.now().toString());
-			resultSet = psGetEvents.executeQuery();
-			listview_events.setStyle("-fx-font-family: \"Arial Rounded MT\"; -fx-font-size: 12px;");
-
-			// While there are still events in the result set, add them to the displayed list
-			while(resultSet.next()) {
-				String eventName = resultSet.getString("Name");
-				String eventLocation = resultSet.getString("Location");
-				String eventStTime = resultSet.getTime("DtStart").toString();
-				String eventEdTime = resultSet.getTime("DtEnd").toString();
-				int eventID = resultSet.getInt("EventId");
-				int spotsAvailable = resultSet.getInt("SpotsAvailable");
-				String dbDate = resultSet.getDate("DtStart").toString();
-				String event = "[" + eventID + "] " + eventName + "  Spots: " + spotsAvailable  + "  Location: " + eventLocation  + "  Date: " + dbDate;
-
-				listview_events.getItems().add(event);
-			}
 
 			psGetDonations = connection.prepareStatement("SELECT sum(Amount) AS total_amount FROM donation NATURAL JOIN donated_by WHERE Email = ?");
 			psGetDonations.setString(1, email);
@@ -229,19 +289,20 @@ public class DonatePageController implements Initializable{
 				label_contribution.setText("$" + resultSet.getInt("total_amount"));
 			}
 
+			// Get the organization total
+			psGetDonations = connection.prepareStatement("SELECT sum(Amount) AS total_amount FROM donation");
+			resultSet = psGetDonations.executeQuery();
+			if(resultSet.isBeforeFirst()) {
+				resultSet.next();
+				label_org_total.setText("$" + resultSet.getInt("total_amount"));
+			}
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			if (resultSet != null) {
 				try {
 					resultSet.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (psGetEvents != null) {
-				try {
-					psGetEvents.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -260,6 +321,86 @@ public class DonatePageController implements Initializable{
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+
+	/**
+	 * An inner class that is used to create a datatype for Events.
+	 */
+	protected static class Event {
+
+		private final SimpleStringProperty eventId;
+		private final SimpleStringProperty donations;
+		private final SimpleStringProperty date;
+		private final SimpleStringProperty startTime;
+		private final SimpleStringProperty endTime;
+		private final SimpleStringProperty name;
+		private final SimpleStringProperty location;
+
+		private Event(String eId, String donation, String dt, String start, String end, String n, String loc) {
+			this.eventId = new SimpleStringProperty(eId);
+			this.donations = new SimpleStringProperty(donation);
+			this.date = new SimpleStringProperty(dt);
+			this.startTime = new SimpleStringProperty(start);
+			this.endTime = new SimpleStringProperty(end);
+			this.name = new SimpleStringProperty(n);
+			this.location = new SimpleStringProperty(loc);
+		}
+
+		public String getEventId() {
+			return eventId.get();
+		}
+
+		public void setEventId(String n) {
+			eventId.set(n);
+		}
+
+		public String getDonations() {
+			return donations.get();
+		}
+
+		public void setDonations(String donation) {
+			donations.set(donation);
+		}
+
+		public String getDate() {
+			return date.get();
+		}
+
+		public void setDate(String dt) {
+			date.set(dt);
+		}
+
+		public String getStartTime() {
+			return startTime.get();
+		}
+
+		public void setStartTime(String start) {
+			startTime.set(start);
+		}
+
+		public String getEndTime() {
+			return endTime.get();
+		}
+
+		public void setEndTime(String end) {
+			endTime.set(end);
+		}
+
+		public String getName() {
+			return name.get();
+		}
+
+		public void setName(String n) {
+			name.set(n);
+		}
+
+		public String getLocation() {
+			return location.get();
+		}
+
+		public void setLocation(String loc) {
+			location.set(loc);
 		}
 	}
 }
