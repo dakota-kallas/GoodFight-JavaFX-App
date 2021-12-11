@@ -1,10 +1,18 @@
+/**
+ * ReportingController.java
+ *
+ * JavaFX Bookkeeping Software
+ *
+ * This is the controller class for when the reporting page is loaded for an admin account.
+ *
+ */
+
 package application;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -14,12 +22,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class ReportingController implements Initializable{
-	
+	// Declare all JavaFX interactive controls
 	@FXML private Button button_logout;
 	@FXML private Button button_home;
 	@FXML private Button button_create_event;
@@ -62,6 +68,7 @@ public class ReportingController implements Initializable{
 		cb_user_attributes.setItems(FXCollections.observableArrayList("FirstName", "LastName", "Email", "Type", "Active"));
 		cb_user_attributes.setTooltip(new Tooltip("Select the search attribute"));
 
+		// Configure Columns for the "User" table view
 		TableColumn<User, String> firstNameCol = new TableColumn<>("First Name");
 		firstNameCol.setCellValueFactory(new PropertyValueFactory<>("firstName"));
 		TableColumn<User, String> lastNameCol = new TableColumn<>("Last Name");
@@ -143,6 +150,7 @@ public class ReportingController implements Initializable{
 		button_delete_selected.setOnAction((new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				// Check for data validation if an event was selected
 				if(tableview_results.getSelectionModel().isEmpty()) {
 					System.out.println("No item selected.");
 					Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -150,6 +158,7 @@ public class ReportingController implements Initializable{
 					alert.show();
 					return;
 				}
+				// Delete the selected event
 				Event currentEvent =  (Event) tableview_results.getSelectionModel().getSelectedItem();
 				int eventId = Integer.valueOf(currentEvent.getEventId());
 				DBUtils.cancelEvent(event, eventId);
@@ -161,6 +170,7 @@ public class ReportingController implements Initializable{
 		button_set_inactive.setOnAction((new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				// Check for data validation if a user was selected
 				if(tableview_results.getSelectionModel().isEmpty()) {
 					System.out.println("No item selected.");
 					Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -168,7 +178,7 @@ public class ReportingController implements Initializable{
 					alert.show();
 					return;
 				}
-
+				// Set the user's status to inactive
 				User currentUser =  (User) tableview_results.getSelectionModel().getSelectedItem();
 				DBUtils.setUserActiveStatus(event, currentUser.getEmail(), 0);
 				DBUtils.changeScene(event, "Reporting.fxml", "Reporting", email, firstName, lastName, accountType);
@@ -179,6 +189,7 @@ public class ReportingController implements Initializable{
 		button_set_active.setOnAction((new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				// Check for data validation if a user was selected
 				if(tableview_results.getSelectionModel().isEmpty()) {
 					System.out.println("No item selected.");
 					Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -186,7 +197,7 @@ public class ReportingController implements Initializable{
 					alert.show();
 					return;
 				}
-
+				// Set the user's status to active
 				User currentUser =  (User) tableview_results.getSelectionModel().getSelectedItem();
 				DBUtils.setUserActiveStatus(event, currentUser.getEmail(), 1);
 				DBUtils.changeScene(event, "Reporting.fxml", "Reporting", email, firstName, lastName, accountType);
@@ -201,6 +212,7 @@ public class ReportingController implements Initializable{
 				tableview_results.getItems().clear();
 				tableview_results.getColumns().clear();
 
+				// Configure the Columns of the table depending on the datatype
 				if(table.equals("user")) {
 					TableColumn<User, String> firstNameCol = new TableColumn<>("First Name");
 					firstNameCol.setCellValueFactory(new PropertyValueFactory<>("firstName"));
@@ -297,13 +309,17 @@ public class ReportingController implements Initializable{
 				}
 
 				try {
+					// Connect to the SQL server and generate the query
 					connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
 					if(table.equals("user")) {
+						// Check if the user wishes to search on an attribute
 						if(attribute.equals("") || searchValue.equals("")) {
 							psQuery = connection.prepareStatement("SELECT FirstName, LastName, Email, Type, Active, TotalHours, TotalDonations FROM user NATURAL LEFT JOIN (SELECT Email, sum(HoursAttended) AS TotalHours FROM attended GROUP BY Email) AS HoursQuery NATURAL LEFT JOIN (SELECT Email, sum(Amount) AS TotalDonations FROM user NATURAL LEFT JOIN donated_by NATURAL LEFT JOIN donation GROUP BY Email) AS DonationQuery GROUP BY Email ORDER BY Active DESC, LastName, FirstName");
 						} else {
+							// Check which attribute is being searched on
 							if(attribute.equals("Active")) {
 								psQuery = connection.prepareStatement("SELECT FirstName, LastName, Email, Type, Active,  TotalHours, TotalDonations FROM user NATURAL LEFT JOIN (SELECT Email, sum(HoursAttended) AS TotalHours FROM attended GROUP BY Email) AS HoursQuery NATURAL LEFT JOIN (SELECT Email, sum(Amount) AS TotalDonations FROM user NATURAL LEFT JOIN donated_by NATURAL LEFT JOIN donation GROUP BY Email) AS DonationQuery WHERE " + attribute + " = ? GROUP BY Email");
+								// Check data validation on the search value used
 								if(searchValue.equals("1") || searchValue.toLowerCase().equals("true")) {
 									psQuery.setInt(1, 1);
 								} else if(searchValue.equals("0") || searchValue.toLowerCase().equals("false")) {
@@ -322,11 +338,17 @@ public class ReportingController implements Initializable{
 							}
 						}
 					} else if(table.equals("event")) {
+						// Check if the user wishes to search on an attribute
 						if(attribute.equals("") || searchValue.equals("")) {
 							psQuery = connection.prepareStatement("SELECT EventId, SpotsAvailable, DtStart, DtEnd, Name, Location, Description, Active FROM " + table + " ORDER BY Active DESC, DtStart DESC, Name");
 						} else {
+							// Check which attribute is being searched on
+							if(attribute.equals("Date")) {
+								attribute = "DtStart";
+							}
 							psQuery = connection.prepareStatement("SELECT EventId, SpotsAvailable, DtStart, DtEnd, Name, Location, Description, Active FROM " + table + " WHERE " + attribute + " LIKE ?");
 							if(attribute.equals("EventId") || attribute.equals("SpotsAvailable")) {
+								// Check data validation on the value used to search
 								try {
 									psQuery.setInt(1, Integer.valueOf(searchValue));
 								} catch(NumberFormatException e) {
@@ -342,7 +364,9 @@ public class ReportingController implements Initializable{
 					}
 					resultSet = psQuery.executeQuery();
 
+					// Iterate through the results of the query and add them to the table
 					while(resultSet.next()) {
+						// Check which table was selected
 						if(table.equals("user")) {
 							String curFirstName = resultSet.getString("FirstName");
 							String curLastName = resultSet.getString("LastName");

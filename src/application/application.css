@@ -99,6 +99,7 @@
 
 // Text field color change
 .text-field {
+    -fx-text-fill: white;
     -fx-background-color:  #373737;
     -fx-border: none;
 }
@@ -111,6 +112,7 @@
 
 // Text area color change
 .text-area {
+    -fx-text-fill: white;
     -fx-background-color: #373737;
 }
 

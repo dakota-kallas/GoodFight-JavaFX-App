@@ -1,4 +1,4 @@
-/* 
+/**
  * DBUtils.java
  * 
  * JavaFX Bookkeeping Software
@@ -27,7 +27,6 @@ import javafx.scene.Scene;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import jdk.jfr.Description;
 
 public class DBUtils {
 	
@@ -73,11 +72,11 @@ public class DBUtils {
 				} else {
 					System.out.println("[ERROR] Page not loaded.");
 				}
-			// Catch any exception that is thrown and print it's stack trace
+			// Catch any exception that is thrown and print its stack trace
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		// Navigate to the log in page. We do not need to process user information here.
+		// Navigate to the login page. We do not need to process user information here.
 		} else {
 			try {
 				root = FXMLLoader.load(DBUtils.class.getResource(fxmlFile));
@@ -86,6 +85,7 @@ public class DBUtils {
 			}
 		}
 
+		// Configure the page to be displayed
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.setTitle(title);
 		Scene scene = new Scene(root, 800, 600);
@@ -110,10 +110,10 @@ public class DBUtils {
 		PreparedStatement psCheckUserExists = null;
 		ResultSet resultSet = null;
 
-		/**
+		/*
 		 *   Password hashing through PBKDF2
 		 * 	 - one of the most widely adopted government standardized password hashing algorithms
-		 **/
+		 */
 
 		// Change password string into a char array
 		char[] charArrPass = password.toCharArray();

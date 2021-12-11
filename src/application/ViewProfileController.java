@@ -1,3 +1,12 @@
+/**
+ * ViewProfileController.java
+ *
+ * JavaFX Bookkeeping Software
+ *
+ * This is the controller class for when the profile page is loaded.
+ *
+ */
+
 package application;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -15,7 +24,7 @@ import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class ViewProfileController implements Initializable{
-	
+	// Declare all JavaFX interactive controls
 	@FXML private Button button_logout;
 	@FXML private Button button_home;
 	@FXML private Button button_create_event;
@@ -53,6 +62,7 @@ public class ViewProfileController implements Initializable{
 		tableview_results.setEditable(false);
 		tableview_results.getColumns().clear();
 
+		// Configure Columns for the TableView
 		TableColumn<ReportingController.User, String> eventIdCol = new TableColumn<>("Event ID");
 		eventIdCol.setCellValueFactory(new PropertyValueFactory<>("eventId"));
 		TableColumn<ReportingController.User, String> nameCol = new TableColumn<>("Name");
@@ -234,7 +244,7 @@ public class ViewProfileController implements Initializable{
 	}
 
 	/**
-	 * An inner class that is used to create a datatype that is populated in the reporting table for Events.
+	 * An inner class that is used to create a datatype for Events.
 	 */
 	protected static class Event {
 

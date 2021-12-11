@@ -1,3 +1,12 @@
+/**
+ * Controller.java
+ *
+ * JavaFX Bookkeeping Software
+ *
+ * This is the controller class for when the login page is loaded.
+ *
+ */
+
 package application;
 
 import javafx.event.ActionEvent;
@@ -8,15 +17,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 
 public class Controller implements Initializable {
-
+    // Declare all JavaFX interactive controls
     @FXML private Button button_login;
     @FXML private Button button_sign_up;
     @FXML private Button button_user_manual;
@@ -24,6 +29,12 @@ public class Controller implements Initializable {
     @FXML private TextField tf_email;
     @FXML private PasswordField pf_password;
 
+    /**
+     * Method that runs listening for Action Events.
+     *
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 

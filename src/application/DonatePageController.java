@@ -1,3 +1,12 @@
+/**
+ * DonatePageController.java
+ *
+ * JavaFX Bookkeeping Software
+ *
+ * This is the controller class for when the donate page is loaded.
+ *
+ */
+
 package application;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -14,7 +23,7 @@ import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class DonatePageController implements Initializable{
-	
+	// Declare all JavaFX interactive controls
 	@FXML private Button button_logout;
 	@FXML private Button button_home;
 	@FXML private Button button_create_event;
@@ -54,6 +63,7 @@ public class DonatePageController implements Initializable{
 		tableview_results.setEditable(true);
 		tableview_results.getColumns().clear();
 
+		// Configure Columns for the TableView
 		TableColumn<ReportingController.User, String> eventIdCol = new TableColumn<>("Event ID");
 		eventIdCol.setCellValueFactory(new PropertyValueFactory<>("eventId"));
 		TableColumn<ReportingController.User, String> nameCol = new TableColumn<>("Name");
@@ -78,11 +88,13 @@ public class DonatePageController implements Initializable{
 		ResultSet resultSet = null;
 
 		try {
+			// Connect to the SQL server and generate the query
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
 			psGetEvents = connection.prepareStatement("SELECT Name, Location, DtStart, DtEnd, event.EventId, Donations FROM event NATURAL LEFT JOIN (Select EventId, sum(Amount) AS Donations FROM donated_to NATURAL JOIN donation GROUP BY EventId) AS TotDonations WHERE DtStart >= ? AND Active = 1 GROUP BY event.EventId");
 			psGetEvents.setString(1, LocalDate.now().toString());
 			resultSet = psGetEvents.executeQuery();
 
+			// Iterate through the events in the query results and add them to the TableView
 			while(resultSet.next()) {
 				String eventName = resultSet.getString("Name");
 				String eventLocation = resultSet.getString("Location");
@@ -97,6 +109,7 @@ public class DonatePageController implements Initializable{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
+			// Close all the SQL statements and connection
 			if (resultSet != null) {
 				try {
 					resultSet.close();
@@ -198,6 +211,7 @@ public class DonatePageController implements Initializable{
 		button_submit_donation.setOnAction((new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				// Get the amount and type of donation from the user
 				boolean valid = true;
 				String toggleType = ((RadioButton) donationTypeToggle.getSelectedToggle()).getText();
 				String donation = ((RadioButton) donationAmountToggle.getSelectedToggle()).getText();
@@ -238,7 +252,15 @@ public class DonatePageController implements Initializable{
 			}
 		}));
 	}
-	
+
+	/**
+	 * Method used set a user's information on the current page.
+	 *
+	 * @param firstName: the user's first name
+	 * @param lastName: the user's last name
+	 * @param email: the user's unique email
+	 * @param accountType: the user's account type
+	 */
 	public void setUserInformation(String firstName, String lastName, String email, String accountType) {
 		this.firstName = firstName;
 		this.lastName = lastName;

@@ -1,3 +1,12 @@
+/**
+ * ViewEventsController.java
+ *
+ * JavaFX Bookkeeping Software
+ *
+ * This is the controller class for when the view events page is loaded.
+ *
+ */
+
 package application;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -16,7 +25,7 @@ import java.sql.*;
 import java.util.ResourceBundle;
 
 public class ViewEventsController implements Initializable{
-
+	// Declare all JavaFX interactive controls
 	@FXML private Button button_logout;
 	@FXML private Button button_home;
 	@FXML private Button button_view_events;
@@ -62,6 +71,7 @@ public class ViewEventsController implements Initializable{
 		tableview_results.setEditable(true);
 		tableview_results.getColumns().clear();
 
+		// Configure Columns for the TableView
 		TableColumn<ReportingController.User, String> nameCol = new TableColumn<>("Name");
 		nameCol.setMinWidth(110);
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -211,6 +221,7 @@ public class ViewEventsController implements Initializable{
 					PreparedStatement psGetEvent = null;
 					ResultSet resultSet = null;
 					try {
+						// Connect to the SQL server and generate the query
 						connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
 						psGetEvent = connection.prepareStatement("SELECT Name, Location, DtStart, DtEnd, SpotsAvailable, Description, sum(Amount) AS TotalDonations FROM event NATURAL LEFT JOIN donated_to NATURAL LEFT JOIN donation WHERE EventId = ?");
 						psGetEvent.setString(1, eventId + "");

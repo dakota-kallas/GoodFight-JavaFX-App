@@ -24,6 +24,8 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("LogIn.fxml"));
         primaryStage.setTitle("Log in!");
 		Scene scene = new Scene(root, 800, 600);
+		// Add the CSS styling file to the scene
+		scene.getStylesheets().add("application/application.css");
         primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		// Gather the icon resource for the page and load it onto the window

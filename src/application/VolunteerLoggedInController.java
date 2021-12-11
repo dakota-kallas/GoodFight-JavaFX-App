@@ -1,3 +1,12 @@
+/**
+ * VolunteerLoggedInController.java
+ *
+ * JavaFX Bookkeeping Software
+ *
+ * This is the controller class for when the home page is loaded for a volunteer/donor account.
+ *
+ */
+
 package application;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -16,7 +25,7 @@ import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class VolunteerLoggedInController implements Initializable{
-	
+	// Declare all JavaFX interactive controls
 	@FXML private Button button_logout;
 	@FXML private Button button_home;
 	@FXML private Button button_profile;
@@ -46,6 +55,7 @@ public class VolunteerLoggedInController implements Initializable{
 		tableview_results.getColumns().clear();
 		label_cancelled.setVisible(false);
 
+		// Configure Columns for the TableView
 		TableColumn<ReportingController.User, String> eventIdCol = new TableColumn<>("Event ID");
 		eventIdCol.setCellValueFactory(new PropertyValueFactory<>("eventId"));
 		TableColumn<ReportingController.User, String> nameCol = new TableColumn<>("Name");
@@ -67,6 +77,7 @@ public class VolunteerLoggedInController implements Initializable{
 		// Listener to update GUI and Table when the "Show cancelled?" checkbox is changed
 		checkbox_cancelled.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			public void changed(ObservableValue ov, Boolean old_val, Boolean new_val) {
+				// Set up the connection to the SQL server
 				tableview_results.getItems().clear();
 				Connection connection = null;
 				PreparedStatement psGetEvents = null;
@@ -81,6 +92,7 @@ public class VolunteerLoggedInController implements Initializable{
 				}
 
 				try {
+					// Connect to the SQL server and generate the query
 					connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
 					psGetEvents = connection.prepareStatement("SELECT Name, Location, DtStart, DtEnd, EventId, SpotsAvailable, Email FROM event NATURAL JOIN attended WHERE email = ? AND DtStart >= ? AND Active = ?");
 					psGetEvents.setString(1, email);
@@ -88,6 +100,7 @@ public class VolunteerLoggedInController implements Initializable{
 					psGetEvents.setInt(3, active);
 					resultSet = psGetEvents.executeQuery();
 
+					// Iterate through the events in the query results and add them to the TableView
 					while(resultSet.next()) {
 						String eventName = resultSet.getString("Name");
 						String eventLocation = resultSet.getString("Location");
@@ -102,6 +115,7 @@ public class VolunteerLoggedInController implements Initializable{
 				} catch (SQLException e) {
 					e.printStackTrace();
 				} finally {
+					// Close all the SQL statements and connection
 					if (resultSet != null) {
 						try {
 							resultSet.close();
@@ -266,7 +280,7 @@ public class VolunteerLoggedInController implements Initializable{
 	}
 
 	/**
-	 * An inner class that is used to create a datatype that is populated in the reporting table for Events.
+	 * An inner class that is used to create a datatype for Events.
 	 */
 	protected static class Event {
 

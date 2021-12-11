@@ -1,3 +1,12 @@
+/**
+ * AdminLoggedInController.java
+ *
+ * JavaFX Bookkeeping Software
+ *
+ * This is the controller class for when the home page is loaded for an admin account.
+ *
+ */
+
 package application;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -16,7 +25,7 @@ import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class AdminLoggedInController implements Initializable{
-	
+	// Declare all JavaFX interactive controls
 	@FXML private Button button_logout;
 	@FXML private Button button_home;
 	@FXML private Button button_create_event;
@@ -48,6 +57,7 @@ public class AdminLoggedInController implements Initializable{
 		tableview_results.getColumns().clear();
 		label_cancelled.setVisible(false);
 
+		// Configure Columns for the TableView
 		TableColumn<ReportingController.User, String> eventIdCol = new TableColumn<>("Event ID");
 		eventIdCol.setCellValueFactory(new PropertyValueFactory<>("eventId"));
 		TableColumn<ReportingController.User, String> nameCol = new TableColumn<>("Name");
@@ -70,6 +80,8 @@ public class AdminLoggedInController implements Initializable{
 		checkbox_cancelled.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			public void changed(ObservableValue ov,Boolean old_val, Boolean new_val) {
 				tableview_results.getItems().clear();
+
+				// Set up the connection to the SQL server
 				Connection connection = null;
 				PreparedStatement psGetEvents = null;
 				ResultSet resultSet = null;
@@ -83,6 +95,7 @@ public class AdminLoggedInController implements Initializable{
 				}
 
 				try {
+					// Connect to the SQL server and generate the query
 					connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
 					psGetEvents = connection.prepareStatement("SELECT Name, Location, DtStart, DtEnd, EventId, SpotsAvailable, Email FROM event NATURAL JOIN attended WHERE email = ? AND DtStart >= ? AND Active = ?");
 					psGetEvents.setString(1, email);
@@ -90,6 +103,7 @@ public class AdminLoggedInController implements Initializable{
 					psGetEvents.setInt(3, active);
 					resultSet = psGetEvents.executeQuery();
 
+					// Iterate through the events in the query results and add them to the TableView
 					while(resultSet.next()) {
 						String eventName = resultSet.getString("Name");
 						String eventLocation = resultSet.getString("Location");
@@ -104,6 +118,7 @@ public class AdminLoggedInController implements Initializable{
 				} catch (SQLException e) {
 					e.printStackTrace();
 				} finally {
+					// Close all the SQL statements and connection
 					if (resultSet != null) {
 						try {
 							resultSet.close();
@@ -226,18 +241,20 @@ public class AdminLoggedInController implements Initializable{
 		label_name.setText(firstName + " " + lastName);
 		label_account_type.setText(accountType);
 
-		// Configure the ListView to display all the user's events
+		// Configure the TableView to display all the user's events
 		Connection connection = null;
 		PreparedStatement psGetEvents = null;
 		ResultSet resultSet = null;
 
 		try {
+			// Connect to the SQL server
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/npdb", "root", "admin");
 			psGetEvents = connection.prepareStatement("SELECT Name, Location, DtStart, DtEnd, EventId, SpotsAvailable, Email FROM event NATURAL JOIN attended WHERE email = ? AND DtStart >= ? AND Active = 1");
 			psGetEvents.setString(1, email);
 			psGetEvents.setString(2, LocalDate.now().toString());
 			resultSet = psGetEvents.executeQuery();
 
+			// Iterate through the events in the query results and add them to the TableView
 			while(resultSet.next()) {
 				String eventName = resultSet.getString("Name");
 				String eventLocation = resultSet.getString("Location");
@@ -252,6 +269,7 @@ public class AdminLoggedInController implements Initializable{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
+			// Close the SQL statements and connection
 			if (resultSet != null) {
 				try {
 					resultSet.close();
@@ -277,7 +295,7 @@ public class AdminLoggedInController implements Initializable{
 	}
 
 	/**
-	 * An inner class that is used to create a datatype that is populated in the reporting table for Events.
+	 * An inner class that is used to create a datatype for Events.
 	 */
 	protected static class Event {
 

@@ -80,7 +80,10 @@
                   <Font name="Arial Rounded MT Bold" size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="tf_edit_email" editable="false" layoutX="153.0" layoutY="163.0" prefHeight="28.0" prefWidth="343.0" promptText="Email Address" style="-fx-background-color: #f7f7f7;" />
+            <TextField fx:id="tf_edit_email" editable="false" layoutX="153.0" layoutY="163.0" prefHeight="28.0" prefWidth="343.0" promptText="Email Address">
+               <font>
+                  <Font name="Arial Rounded MT" size="12.0" />
+               </font></TextField>
             <Label layoutX="14.0" layoutY="208.0" prefHeight="17.0" prefWidth="80.0" text="First Name" textFill="WHITE">
                <font>
                   <Font name="Arial Rounded MT Bold" size="14.0" />
@@ -91,7 +94,10 @@
                   <Font name="Arial Rounded MT Bold" size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="tf_edit_first_name" layoutX="153.0" layoutY="203.0" prefHeight="28.0" prefWidth="343.0" promptText="First Name" />
+            <TextField fx:id="tf_edit_first_name" layoutX="153.0" layoutY="203.0" prefHeight="28.0" prefWidth="343.0" promptText="First Name">
+               <font>
+                  <Font name="Arial Rounded MT" size="12.0" />
+               </font></TextField>
             <Label layoutX="14.0" layoutY="248.0" prefHeight="17.0" prefWidth="73.0" text="Last Name" textFill="WHITE">
                <font>
                   <Font name="Arial Rounded MT Bold" size="14.0" />
@@ -102,7 +108,10 @@
                   <Font name="Arial Rounded MT Bold" size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="tf_edit_last_name" layoutX="153.0" layoutY="243.0" prefHeight="28.0" prefWidth="343.0" promptText="Last Name" />
+            <TextField fx:id="tf_edit_last_name" layoutX="153.0" layoutY="243.0" prefHeight="28.0" prefWidth="343.0" promptText="Last Name">
+               <font>
+                  <Font name="Arial Rounded MT" size="12.0" />
+               </font></TextField>
             <TableView fx:id="tableview_results" layoutX="29.0" layoutY="312.0" prefHeight="152.0" prefWidth="560.0">
                <columns>
                   <TableColumn prefWidth="75.0" text="C1" />

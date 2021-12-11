@@ -1,3 +1,12 @@
+/**
+ * CreateEventController.java
+ *
+ * JavaFX Bookkeeping Software
+ *
+ * This is the controller class for when the create event page is loaded.
+ *
+ */
+
 package application;
 
 import javafx.collections.FXCollections;
@@ -13,7 +22,7 @@ import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class CreateEventController implements Initializable{
-	
+	// Declare all JavaFX interactive controls
 	@FXML private Button button_logout;
 	@FXML private Button button_home;
 	@FXML private Button button_create_event;
@@ -177,6 +186,7 @@ public class CreateEventController implements Initializable{
 
 				String date = dp_select_date.getValue().toString();
 				String location = tf_location.getText();
+				// If the description field is null, do not pass it to the event creation
 				if(ta_description.getText().trim().isEmpty()) {
 					DBUtils.createEvent(event, eventName, null, date, location, (int) spinner_spots.getValue(), startTime, endTime, email, firstName, lastName, accountType);
 				} else {
@@ -187,7 +197,15 @@ public class CreateEventController implements Initializable{
 			}
 		});
 	}
-	
+
+	/**
+	 * Method used set a user's information on the current page.
+	 *
+	 * @param firstName: the user's first name
+	 * @param lastName: the user's last name
+	 * @param email: the user's unique email
+	 * @param accountType: the user's account type
+	 */
 	public void setUserInformation(String firstName, String lastName, String email, String accountType) {
 		this.firstName = firstName;
 		this.lastName = lastName;
