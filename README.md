@@ -26,3 +26,4 @@ All project files can be found in the main branch.
 ![Donate Page](https://github.com/dakota-kallas/GoodFight-JavaFX-App/blob/main/Screenshots/DonatePage.PNG)
 ![Reporting](https://github.com/dakota-kallas/GoodFight-JavaFX-App/blob/main/Screenshots/Reporting.PNG)
 ![Profile Page](https://github.com/dakota-kallas/GoodFight-JavaFX-App/blob/main/Screenshots/Profile.PNG)
+
