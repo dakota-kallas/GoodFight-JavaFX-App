@@ -1,6 +1,15 @@
 # GoodFight-JavaFX-App
-A bookkeeping software developed for The Good Fight, a non-profit in La Crosse, WI. 
-<br />This application was developed for a Software Design semester team project using the 
+This project was a software system developed for a local non-profit organization, The Good Fight, to handle their bookkeeping needs. The solution was created using the JavaFX GUI framework and a MYSQL database. The software allows for the management of different types of users including Administrators, Donors, Volunteers, and Others.
+
+Administrators have the ability to create, maintain, and manage user accounts, including their own. They also have the ability to perform simple data analysis and generate reports.
+
+Donors are able to make restricted or unrestricted donations and attend events. Volunteers are able to register to help with events and programs.
+
+The software also provides the ability to add, search, modify, and view events and programs, with a graphical user interface consisting of multiple screens for different tasks. This interface includes a welcome screen that displays the different functionalities of the software, as well as separate screens for logging in or registering to the system.
+
+The solution was designed with a focus on ease-of-use and user-friendly navigation, allowing for seamless management of the non-profit's participants and events.
+
+This application was developed for a Software Design semester team project using the 
 Agile design process.
 
 **Team members:** _Dakota Kallas, Jack Parker, Chase Roehl, Khrystyna Yadvinska_
